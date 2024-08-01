@@ -13,6 +13,15 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      height: {
+        'headerHeight': '48px',
+        'navbarHeight': '55px',
+      },
+      minHeight: {
+        'default': 'calc(100dvh - 108px)',
+        
+      }
+
     },
   },
   plugins: [],
