@@ -16,6 +16,7 @@
     "next": "14.2.5",
     "react": "^18",
     "react-dom": "^18",
+    "react-kakao-maps-sdk": "^1.1.27",
     "shadcn": "^1.0.0",
     "zustand": "^4.5.4"
   },
