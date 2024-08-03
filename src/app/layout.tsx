@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "./_component/Header";
 import NavBar from "./_component/NavBar";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,6 +25,10 @@ export default function RootLayout({
         {children}
         </div>
         <NavBar />
+        <Script
+          src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_KEY}&libraries=services,clusterer&autoload=false`}
+          strategy="beforeInteractive"
+        />
         </body>
     </html>
   );
