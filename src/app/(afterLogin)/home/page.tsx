@@ -1,33 +1,23 @@
-'use client'
-import { Map, MapTypeControl }  from "react-kakao-maps-sdk"
-import useKakaoLoader from "./_lib/useKakaoLoader"
-import { Dispatch, SetStateAction, useRef, useState } from "react"
+import MapContainer from './_components/Map';
 
-function MapContainer() {
-  useKakaoLoader()
-  const mapRef = useRef<kakao.maps.Map>(null)
-
-  return (
-    <Map // 지도를 표시할 Container
-      center={{ lat: 33.450701, lng: 126.570667 }}
-      style={{
-        // 지도의 크기
-        width: "100%",
-        height: "100%",
-        flex: '1',
-        display:'flex'
-      }}
-      level={3} // 지도의 확대 레벨
-    >
-      <MapTypeControl position={"TOPRIGHT"} />
-    </Map>
-  )
-}
 // 비 로그인시 '/home' 으로 전환
 export default function Page() {
+  const markers = [
+    { lat: 33.450701, lng: 126.570667, groupId: 1 },
+    {
+      lat: 33.450302,
+      lng: 126.2222,
+      groupId: 2,
+    },
+    {
+      lat: 33.450302,
+      lng: 126.22212,
+      groupId: 3,
+    },
+  ];
   return (
     <>
-      <MapContainer />
+      <MapContainer markers={markers} />
     </>
   );
 }
