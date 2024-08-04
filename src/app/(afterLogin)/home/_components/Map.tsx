@@ -1,14 +1,54 @@
-'use client'
+'use client';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
-import { location } from '@/app/_types/Map';
+import { geolocation, location } from '@/app/_types/Map';
+import { useEffect, useState } from 'react';
 interface MapContainerProps {
   markers: location[];
 }
-export default function MapContainer({markers}:MapContainerProps) {
-
+export default function MapContainer({ markers }: MapContainerProps) {
+  const [curLocation, setCurLocation] = useState<geolocation>({
+    center: {
+      lat: 33.450701,
+      lng: 126.570667,
+    },
+    errMsg: null,
+    isLoading: true,
+  });
+  console.log(curLocation)
+  useEffect(() => {
+    if (navigator.geolocation) {
+      // GeoLocation을 이용해서 접속 위치를 얻어옵니다
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setCurLocation((prev) => ({
+            ...prev,
+            center: {
+              lat: position.coords.latitude, // 위도
+              lng: position.coords.longitude, // 경도
+            },
+            isLoading: false,
+          }));
+        },
+        (err) => {
+          setCurLocation((prev) => ({
+            ...prev,
+            errMsg: err.message,
+            isLoading: false,
+          }));
+        },
+      );
+    } else {
+      // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
+      setCurLocation((prev) => ({
+        ...prev,
+        errMsg: 'geolocation을 사용할수 없어요..',
+        isLoading: false,
+      }));
+    }
+  }, []);
   return (
     <Map // 지도를 표시할 Container
-      center={{ lat: 33.450701, lng: 126.570667}}
+      center={curLocation.center}
       style={{
         // 지도의 크기
         width: '100%',
@@ -18,10 +58,9 @@ export default function MapContainer({markers}:MapContainerProps) {
       }}
       level={3} // 지도의 확대 레벨
     >
-      {
-        markers.map((a: location) => (
+      {markers.map((a: location) => (
         <MapMarker // 마커를 생성합니다
-          key = {a.groupId}
+          key={a.groupId}
           image={{
             src: `/mapMarker.svg`, // 마커이미지의 주소입니다
             size: {
@@ -41,8 +80,7 @@ export default function MapContainer({markers}:MapContainerProps) {
             lng: a.lng,
           }}
         />
-        ))
-      }
+      ))}
     </Map>
   );
 }
