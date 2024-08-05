@@ -1,7 +1,11 @@
 'use client';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
-import { geolocation, location } from '@/app/_types/Map';
+import { geolocation, groupData, location } from '@/app/_types/Map';
 import { useEffect, useState } from 'react';
+import RecommendCard from './map/RecommendCard';
+import InfoCard from './map/GroupCard';
+import GroupCard from './map/GroupCard';
+
 interface MapContainerProps {
   markers: location[];
 }
@@ -14,7 +18,18 @@ export default function MapContainer({ markers }: MapContainerProps) {
     errMsg: null,
     isLoading: true,
   });
-  console.log(curLocation)
+  const [card, setCard] = useState<string>('none');
+  const [groupData, setGroupData] = useState<groupData>(
+    {
+      "hostNickname" : "아모르겠고",
+      "hostImgUrl" : "https://fakeimg",
+      "beginAt" : "2024-07-30T20:38:09.621499",
+      "endAt" : "2024-07-30T23:38:09.621502",
+      "groupCapacity" : 3,
+      "currentParticipants" : 3,
+      "address" : "서울특별시 종로구 신문로1가 23"
+    }
+  )
   useEffect(() => {
     if (navigator.geolocation) {
       // GeoLocation을 이용해서 접속 위치를 얻어옵니다
@@ -47,6 +62,7 @@ export default function MapContainer({ markers }: MapContainerProps) {
     }
   }, []);
   return (
+    <>
     <Map // 지도를 표시할 Container
       center={curLocation.center}
       style={{
@@ -57,6 +73,7 @@ export default function MapContainer({ markers }: MapContainerProps) {
         display: 'flex',
       }}
       level={3} // 지도의 확대 레벨
+      className='z-20'
     >
       {markers.map((a: location) => (
         <MapMarker // 마커를 생성합니다
@@ -79,8 +96,12 @@ export default function MapContainer({ markers }: MapContainerProps) {
             lat: a.lat,
             lng: a.lng,
           }}
+          onClick={() => {setCard('select');}}
         />
       ))}
     </Map>
+    {(card === 'select')&& (<RecommendCard address='' title = '' setCard={setCard}/>)}
+    {(card === 'info')&& (<GroupCard groupData={groupData} setCard = {setCard} />)}
+  </>
   );
 }

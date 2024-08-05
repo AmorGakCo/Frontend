@@ -9,3 +9,13 @@ export interface geolocation{
   errMsg: string | null;
   isLoading: boolean;
 }
+
+export interface groupData {
+    hostNickname : string;
+    hostImgUrl : string;
+    beginAt : string;
+    endAt : string;
+    groupCapacity : number;
+    currentParticipants : number;
+    address : string;
+}
