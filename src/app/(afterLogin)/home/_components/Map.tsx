@@ -3,7 +3,6 @@ import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import { geolocation, groupData, location } from '@/app/_types/Map';
 import { useEffect, useState } from 'react';
 import RecommendCard from './map/RecommendCard';
-import InfoCard from './map/GroupCard';
 import GroupCard from './map/GroupCard';
 
 interface MapContainerProps {
@@ -12,24 +11,23 @@ interface MapContainerProps {
 export default function MapContainer({ markers }: MapContainerProps) {
   const [curLocation, setCurLocation] = useState<geolocation>({
     center: {
-      lat: 33.450701,
-      lng: 126.570667,
+      lat: 37.54619261015808,
+      lng: 126.7303762529431,
     },
+    radius: 300,
     errMsg: null,
     isLoading: true,
   });
   const [card, setCard] = useState<string>('none');
-  const [groupData, setGroupData] = useState<groupData>(
-    {
-      "hostNickname" : "아모르겠고",
-      "hostImgUrl" : "https://fakeimg",
-      "beginAt" : "2024-07-30T20:38:09.621499",
-      "endAt" : "2024-07-30T23:38:09.621502",
-      "groupCapacity" : 3,
-      "currentParticipants" : 3,
-      "address" : "서울특별시 종로구 신문로1가 23"
-    }
-  )
+  const [groupData, setGroupData] = useState<groupData>({
+    hostNickname: '아모르겠고',
+    hostImgUrl: 'https://fakeimg',
+    beginAt: '2024-07-30T20:38:09.621499',
+    endAt: '2024-07-30T23:38:09.621502',
+    groupCapacity: 3,
+    currentParticipants: 3,
+    address: '서울특별시 종로구 신문로1가 23',
+  });
   useEffect(() => {
     if (navigator.geolocation) {
       // GeoLocation을 이용해서 접속 위치를 얻어옵니다
@@ -61,47 +59,73 @@ export default function MapContainer({ markers }: MapContainerProps) {
       }));
     }
   }, []);
+
+  // 이후에 API 연동 가능할 시 주변 그룹 불러오기
+  // useGetGroups(curLocation);
+
   return (
     <>
-    <Map // 지도를 표시할 Container
-      center={curLocation.center}
-      style={{
-        // 지도의 크기
-        width: '100%',
-        height: '100%',
-        flex: '1',
-        display: 'flex',
-      }}
-      level={3} // 지도의 확대 레벨
-      className='z-20'
-    >
-      {markers.map((a: location) => (
-        <MapMarker // 마커를 생성합니다
-          key={a.groupId}
-          image={{
-            src: `/mapMarker.svg`, // 마커이미지의 주소입니다
-            size: {
-              width: 24,
-              height: 32,
-            }, // 마커이미지의 크기입니다
-            options: {
-              offset: {
-                x: 27,
-                y: 69,
-              }, // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
-            },
-          }}
-          position={{
-            // 마커가 표시될 위치입니다
-            lat: a.lat,
-            lng: a.lng,
-          }}
-          onClick={() => {setCard('select');}}
-        />
-      ))}
-    </Map>
-    {(card === 'select')&& (<RecommendCard address='' title = '' setCard={setCard}/>)}
-    {(card === 'info')&& (<GroupCard groupData={groupData} setCard = {setCard} />)}
-  </>
+      <Map // 지도를 표시할 Container
+        center={curLocation.center}
+        style={{
+          // 지도의 크기
+          width: '100%',
+          height: '100%',
+          flex: '1',
+          display: 'flex',
+        }}
+        level={3} // 지도의 확대 레벨
+        onDragEnd={(map) => {
+          const lat = map.getCenter().getLat();
+          const lng = map.getCenter().getLng();
+          setCurLocation((prev) => ({
+            ...prev,
+            center: { lat: lat, lng: lng },
+            radius: 500,
+          }));
+        }}
+        onZoomChanged={(map) => {
+          const lat = map.getCenter().getLat();
+          const lng = map.getCenter().getLng();
+          console.log(lat, lng);
+          setCurLocation((prev) => ({
+            ...prev,
+            center: { lat: lat, lng: lng },
+            radius: 500,
+          }));
+        }}
+      >
+        {markers.map((a: location) => (
+          <MapMarker // 마커를 생성합니다
+            key={a.groupId}
+            image={{
+              src: `/mapMarker.svg`, // 마커이미지의 주소입니다
+              size: {
+                width: 24,
+                height: 32,
+              }, // 마커이미지의 크기입니다
+              options: {
+                offset: {
+                  x: 27,
+                  y: 69,
+                }, // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+              },
+            }}
+            position={{
+              // 마커가 표시될 위치입니다
+              lat: a.lat,
+              lng: a.lng,
+            }}
+            onClick={() => {
+              setCard('select');
+            }}
+          />
+        ))}
+      </Map>
+      {card === 'select' && (
+        <RecommendCard address="" title="" setCard={setCard} />
+      )}
+      {card === 'info' && <GroupCard groupData={groupData} setCard={setCard} />}
+    </>
   );
 }
