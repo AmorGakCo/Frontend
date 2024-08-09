@@ -8,6 +8,8 @@ import GroupCard from './map/GroupCard';
 interface MapContainerProps {
   markers: location[];
 }
+type CardType =  "none" | "info" | "recommend";
+
 export default function MapContainer({ markers }: MapContainerProps) {
   const [curLocation, setCurLocation] = useState<geolocation>({
     center: {
@@ -117,12 +119,12 @@ export default function MapContainer({ markers }: MapContainerProps) {
               lng: marker.lng,
             }}
             onClick={() => {
-              setCard('select');
+              setCard('info');
             }}
           />
         ))}
       </Map>
-      {card === 'select' && (
+      {card === 'recommend' && (
         <RecommendCard address="" title="" setCard={setCard} />
       )}
       {card === 'info' && <GroupCard groupData={groupData} setCard={setCard} />}
