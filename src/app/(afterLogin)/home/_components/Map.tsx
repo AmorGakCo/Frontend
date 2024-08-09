@@ -95,9 +95,9 @@ export default function MapContainer({ markers }: MapContainerProps) {
           }));
         }}
       >
-        {markers.map((a: location) => (
+        {markers.map((marker: location) => (
           <MapMarker // 마커를 생성합니다
-            key={a.groupId}
+            key={marker.groupId}
             image={{
               src: `/mapMarker.svg`, // 마커이미지의 주소입니다
               size: {
@@ -113,8 +113,8 @@ export default function MapContainer({ markers }: MapContainerProps) {
             }}
             position={{
               // 마커가 표시될 위치입니다
-              lat: a.lat,
-              lng: a.lng,
+              lat: marker.lat,
+              lng: marker.lng,
             }}
             onClick={() => {
               setCard('select');
