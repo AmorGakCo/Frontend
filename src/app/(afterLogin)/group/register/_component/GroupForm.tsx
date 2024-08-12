@@ -93,6 +93,40 @@ export function GroupForm() {
                 </SelectContent>
               </Select>
             </FormItem>
+            
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="address"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>위치</FormLabel>
+              <FormControl>
+                <div className="flex gap-4">
+                  <Button className="bg-white border-[#2990FF] border-[0.5px] hover:bg-slate-100 text-[#2990FF]">
+                    위치 설정
+                  </Button>
+                  <Button>위치 추천</Button>
+                </div>
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>설명</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="모임을 설명해주세요"
+                  className="resize-none"
+                  {...field}
+                />
+              </FormControl>
+            </FormItem>
           )}
         />
         
