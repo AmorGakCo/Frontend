@@ -1,6 +1,8 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { format, isToday } from 'date-fns';
+
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -23,6 +25,17 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { CalendarIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Calendar } from '@/components/ui/calendar';
+import { TimePickerInput } from './time-picker/time-picker-input';
+import { useState, useEffect } from 'react';
+import { TimePickerDemo } from './time-picker/time-picker-demo';
 
 const formSchema = z.object({
   groupName: z
@@ -40,6 +53,10 @@ const formSchema = z.object({
     .string()
     .min(5, { message: '최소 5글자 이상은 적어주세요.' })
     .max(100),
+  beginAt: z
+    .date()
+    .min(new Date(), { message: '현재 시간보다 과거에 만날 수는 없습니다.' }),
+  endAt: z.date(),
 });
 
 export function GroupForm() {
@@ -49,13 +66,17 @@ export function GroupForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       groupName: '',
-      groupCapacity: 1,
+      groupCapacity: 2,
+      address: 'dqweqweqe',
     },
   });
+
   const groupCapacitys: number[] = [];
   for (let i = 1; i <= MAX_CAPACITY; i++) {
     groupCapacitys.push(i);
   }
+  const date = new Date();
+  console.log(date.getHours());
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -93,7 +114,6 @@ export function GroupForm() {
                 </SelectContent>
               </Select>
             </FormItem>
-            
           )}
         />
         <FormField
@@ -118,7 +138,7 @@ export function GroupForm() {
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>설명</FormLabel>
+              <FormLabel>모임 설명</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="모임을 설명해주세요"
@@ -129,7 +149,94 @@ export function GroupForm() {
             </FormItem>
           )}
         />
-        
+        <FormField
+          control={form.control}
+          name="beginAt"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel className="text-left">시작 시간</FormLabel>
+              <Popover>
+                <FormControl>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        'w-[280px] justify-start text-left font-normal',
+                        !field.value && 'text-muted-foreground',
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {field.value ? (
+                        format(field.value, 'PPP HH:mm:ss')
+                      ) : (
+                        <span>Pick a date</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                </FormControl>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={field.value}
+                    onSelect={field.onChange}
+                    disabled={(date) =>  date.getDate() < new Date().getDate()}
+                    initialFocus
+                  />
+                  <div className="p-3 border-t border-border">
+                    <TimePickerDemo
+                      setDate={field.onChange}
+                      date={field.value}
+                    />
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="endAt"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel className="text-left">종료 시간</FormLabel>
+              <Popover>
+                <FormControl>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        'w-[280px] justify-start text-left font-normal',
+                        !field.value && 'text-muted-foreground',
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {field.value ? (
+                        format(field.value, 'PPP HH:mm:ss')
+                      ) : (
+                        <span>Pick a date</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                </FormControl>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={field.value}
+                    onSelect={field.onChange}
+                    disabled={(date) => date.getDate() < new Date().getDate()}
+                    initialFocus
+                  />
+                  <div className="p-3 border-t border-border">
+                    <TimePickerDemo
+                      setDate={field.onChange}
+                      date={field.value}
+                    />
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </FormItem>
+          )}
+        />
         <Button type="submit">Submit</Button>
       </form>
     </Form>
