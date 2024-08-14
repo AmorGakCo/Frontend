@@ -79,6 +79,9 @@ const config = {
         'headerHeight': '48px',
         'navbarHeight': '55px',
       },
+      margin: {
+        'navbarHeight': '55px',
+      },
       textColor: {
         'title': '#2990FF',
       },

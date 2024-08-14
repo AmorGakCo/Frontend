@@ -33,9 +33,10 @@ import {
 import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Calendar } from '@/components/ui/calendar';
-import { TimePickerInput } from './time-picker/time-picker-input';
-import { useState, useEffect } from 'react';
 import { TimePickerDemo } from './time-picker/time-picker-demo';
+import { useState } from 'react';
+import { Checkbox } from '@/components/ui/checkbox';
+import Link from 'next/link';
 
 const formSchema = z.object({
   groupName: z
@@ -57,6 +58,7 @@ const formSchema = z.object({
     .date()
     .min(new Date(), { message: '현재 시간보다 과거에 만날 수는 없습니다.' }),
   endAt: z.date(),
+  isAgree: z.boolean(),
 });
 
 export function GroupForm() {
@@ -65,21 +67,17 @@ export function GroupForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      groupName: '',
-      groupCapacity: 2,
-      address: 'dqweqweqe',
+      isAgree: false,
     },
   });
-
   const groupCapacitys: number[] = [];
   for (let i = 1; i <= MAX_CAPACITY; i++) {
     groupCapacitys.push(i);
   }
   const date = new Date();
-  console.log(date.getHours());
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="gap-6 flex flex-col">
         <FormField
           control={form.control}
           name="groupName"
@@ -179,7 +177,7 @@ export function GroupForm() {
                     mode="single"
                     selected={field.value}
                     onSelect={field.onChange}
-                    disabled={(date) =>  date.getDate() < new Date().getDate()}
+                    disabled={(date) => date.getDate() < new Date().getDate()}
                     initialFocus
                   />
                   <div className="p-3 border-t border-border">
@@ -237,7 +235,27 @@ export function GroupForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <FormField
+          control={form.control}
+          name="isAgree"
+          render={({ field }) => (
+            <FormItem className="flex flex-col space-y-0.5">
+              <div className="flex gap-3">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <FormLabel>I accept the terms</FormLabel>
+              </div>
+              <FormDescription className='space-y-0'>
+                <div className="underline decoration-solid">Read our T&Cs</div>
+              </FormDescription>
+            </FormItem>
+          )}
+        />
+        <Button type="submit" className='mb-[66px]'>Submit</Button>
       </form>
     </Form>
   );

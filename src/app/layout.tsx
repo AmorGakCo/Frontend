@@ -31,7 +31,7 @@ export default function RootLayout({
         )}>
         <RQProvider>
           <Header />
-          <div className="flex flex-col mt-12 min-h-default relative">
+          <div className="flex flex-col mt-12 min-h-default relative mb-navbarHeight">
             {children}
           </div>
           <NavBar />
