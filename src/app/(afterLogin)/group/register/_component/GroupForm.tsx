@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { format, isToday } from 'date-fns';
+import { format } from 'date-fns';
 
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -34,39 +34,66 @@ import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Calendar } from '@/components/ui/calendar';
 import { TimePickerDemo } from './time-picker/time-picker-demo';
-import { useState } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
-import Link from 'next/link';
 
-const formSchema = z.object({
-  groupName: z
-    .string()
-    .min(2, {
-      message: 'groupName must be at least 2 characters.',
-    })
-    .max(10),
-  groupCapacity: z
-    .number()
-    .min(1, { message: 'groupCapacity must be at least 1 characters' })
-    .max(12),
-  address: z.string(),
-  description: z
-    .string()
-    .min(5, { message: '최소 5글자 이상은 적어주세요.' })
-    .max(100),
-  beginAt: z
-    .date()
-    .min(new Date(), { message: '현재 시간보다 과거에 만날 수는 없습니다.' }),
-  endAt: z.date(),
-  isAgree: z.boolean(),
-});
+const formSchema = z
+  .object({
+    groupName: z
+      .string()
+      .min(2, {
+        message: '그룹 이름은 최소 1글자 이상이어야 합니다.',
+      })
+      .max(10),
+    groupCapacity: z.string().superRefine((data, ctx) => {
+      console.log(data);
+      if (1 > Number(data) || Number(data) > 12) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: '그룹 인원수는 1명에서 12명까지만 가능합니다.',
+        });
+      }
+    }),
+    address: z.string().min(10, {
+      message: '그룹 이름은 최소 10글자 이상이어야 합니다.',
+    }),
+    description: z
+      .string()
+      .min(5, { message: '그룹 설명은 최소 5글자 이상은 적어주세요.' })
+      .max(100, { message: '그룹 설명은 최소 100글자를 넘을 수는 없습니다.' }),
+    beginAt: z
+      .date()
+      .min(new Date(), { message: '현재 시간보다 과거에 만날 수는 없습니다.' }),
+    endAt: z
+      .date()
+      .min(new Date(), { message: '현재 시간보다 과거에 만날 수는 없습니다.' }),
+    isAgree: z.boolean(),
+  })
+  .superRefine((data, ctx) => {
+    if (!data.isAgree) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['isAgree'],
+        message: '약관에 동의하셔야 그룹이 생성됩니다.',
+      });
+    }
+    if (data.endAt <= data.beginAt) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['endAt'],
+        message: '종료일자는 시작일자보다 이후여야 합니다.',
+      });
+    }
+  });
 
 export function GroupForm() {
   // 1. Define your form.
-  const MAX_CAPACITY = 10;
+  const MAX_CAPACITY = 12;
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    mode: 'onChange',
     defaultValues: {
+      groupName: '',
+      address: 'frfrfffffffffffffffff',
       isAgree: false,
     },
   });
@@ -74,10 +101,12 @@ export function GroupForm() {
   for (let i = 1; i <= MAX_CAPACITY; i++) {
     groupCapacitys.push(i);
   }
-  const date = new Date();
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="gap-6 flex flex-col">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="gap-6 flex flex-col"
+      >
         <FormField
           control={form.control}
           name="groupName"
@@ -111,6 +140,7 @@ export function GroupForm() {
                   ))}
                 </SelectContent>
               </Select>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -144,6 +174,7 @@ export function GroupForm() {
                   {...field}
                 />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -172,6 +203,7 @@ export function GroupForm() {
                     </Button>
                   </PopoverTrigger>
                 </FormControl>
+                <FormMessage />
                 <PopoverContent className="w-auto p-0">
                   <Calendar
                     mode="single"
@@ -180,12 +212,12 @@ export function GroupForm() {
                     disabled={(date) => date.getDate() < new Date().getDate()}
                     initialFocus
                   />
-                  <div className="p-3 border-t border-border">
+                  <p className="p-3 border-t border-border">
                     <TimePickerDemo
                       setDate={field.onChange}
                       date={field.value}
                     />
-                  </div>
+                  </p>
                 </PopoverContent>
               </Popover>
             </FormItem>
@@ -194,7 +226,7 @@ export function GroupForm() {
         <FormField
           control={form.control}
           name="endAt"
-          render={({ field }) => (
+          render={({ field, fieldState }) => (
             <FormItem className="flex flex-col">
               <FormLabel className="text-left">종료 시간</FormLabel>
               <Popover>
@@ -216,6 +248,7 @@ export function GroupForm() {
                     </Button>
                   </PopoverTrigger>
                 </FormControl>
+
                 <PopoverContent className="w-auto p-0">
                   <Calendar
                     mode="single"
@@ -224,14 +257,17 @@ export function GroupForm() {
                     disabled={(date) => date.getDate() < new Date().getDate()}
                     initialFocus
                   />
-                  <div className="p-3 border-t border-border">
+                  <p className="p-3 border-t border-border">
                     <TimePickerDemo
                       setDate={field.onChange}
                       date={field.value}
                     />
-                  </div>
+                  </p>
                 </PopoverContent>
               </Popover>
+              {fieldState.error ? (
+                <FormMessage>{fieldState.error.message}</FormMessage>
+              ) : null}
             </FormItem>
           )}
         />
@@ -249,13 +285,16 @@ export function GroupForm() {
                 </FormControl>
                 <FormLabel>I accept the terms</FormLabel>
               </div>
-              <FormDescription className='space-y-0'>
-                <div className="underline decoration-solid">Read our T&Cs</div>
+              <FormDescription className="space-y-0 underline decoration-solid">
+                Read our T&Cs
               </FormDescription>
+              <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit" className='mb-[66px]'>Submit</Button>
+        <Button type="submit" className="mb-[66px]">
+          Submit
+        </Button>
       </form>
     </Form>
   );
