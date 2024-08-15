@@ -1,7 +1,6 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { format } from 'date-fns';
 
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -25,27 +24,20 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { CalendarIcon } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Calendar } from '@/components/ui/calendar';
-import { TimePickerDemo } from './time-picker/time-picker-demo';
 import { Checkbox } from '@/components/ui/checkbox';
+// import { formSchema } from '../_lib/GroupFormSchema';
+import { DateTimePicker } from './time-picker/DateTimePicker';
+import { groupCapacitys } from '../_lib/Constants';
 
 const formSchema = z
   .object({
-    groupName: z
+    name: z
       .string()
       .min(2, {
         message: '그룹 이름은 최소 1글자 이상이어야 합니다.',
       })
       .max(10),
     groupCapacity: z.string().superRefine((data, ctx) => {
-      console.log(data);
       if (1 > Number(data) || Number(data) > 12) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -66,9 +58,8 @@ const formSchema = z
     endAt: z
       .date()
       .min(new Date(), { message: '현재 시간보다 과거에 만날 수는 없습니다.' }),
-    isAgree: z.boolean(),
-  })
-  .superRefine((data, ctx) => {
+    isAgree: z.boolean()
+  }).superRefine((data, ctx) => {
     if (!data.isAgree) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -86,21 +77,16 @@ const formSchema = z
   });
 
 export function GroupForm() {
-  // 1. Define your form.
-  const MAX_CAPACITY = 12;
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     mode: 'onChange',
     defaultValues: {
-      groupName: '',
-      address: 'frfrfffffffffffffffff',
+      name: '',
+      address: 'wqeqqeqweqw',
       isAgree: false,
     },
   });
-  const groupCapacitys: number[] = [];
-  for (let i = 1; i <= MAX_CAPACITY; i++) {
-    groupCapacitys.push(i);
-  }
+
   return (
     <Form {...form}>
       <form
@@ -109,7 +95,7 @@ export function GroupForm() {
       >
         <FormField
           control={form.control}
-          name="groupName"
+          name="name"
           render={({ field }) => (
             <FormItem>
               <FormLabel>그룹명</FormLabel>
@@ -153,9 +139,8 @@ export function GroupForm() {
               <FormControl>
                 <div className="flex gap-4">
                   <Button className="bg-white border-[#2990FF] border-[0.5px] hover:bg-slate-100 text-[#2990FF]">
-                    위치 설정
+                    장소 검색
                   </Button>
-                  <Button>위치 추천</Button>
                 </div>
               </FormControl>
             </FormItem>
@@ -184,90 +169,17 @@ export function GroupForm() {
           render={({ field }) => (
             <FormItem className="flex flex-col">
               <FormLabel className="text-left">시작 시간</FormLabel>
-              <Popover>
-                <FormControl>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        'w-[280px] justify-start text-left font-normal',
-                        !field.value && 'text-muted-foreground',
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {field.value ? (
-                        format(field.value, 'PPP HH:mm:ss')
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                    </Button>
-                  </PopoverTrigger>
-                </FormControl>
-                <FormMessage />
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    disabled={(date) => date.getDate() < new Date().getDate()}
-                    initialFocus
-                  />
-                  <p className="p-3 border-t border-border">
-                    <TimePickerDemo
-                      setDate={field.onChange}
-                      date={field.value}
-                    />
-                  </p>
-                </PopoverContent>
-              </Popover>
+              <DateTimePicker value={field.value} onChange={field.onChange} />
             </FormItem>
           )}
         />
         <FormField
           control={form.control}
           name="endAt"
-          render={({ field, fieldState }) => (
+          render={({ field }) => (
             <FormItem className="flex flex-col">
               <FormLabel className="text-left">종료 시간</FormLabel>
-              <Popover>
-                <FormControl>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        'w-[280px] justify-start text-left font-normal',
-                        !field.value && 'text-muted-foreground',
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {field.value ? (
-                        format(field.value, 'PPP HH:mm:ss')
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                    </Button>
-                  </PopoverTrigger>
-                </FormControl>
-
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    disabled={(date) => date.getDate() < new Date().getDate()}
-                    initialFocus
-                  />
-                  <p className="p-3 border-t border-border">
-                    <TimePickerDemo
-                      setDate={field.onChange}
-                      date={field.value}
-                    />
-                  </p>
-                </PopoverContent>
-              </Popover>
-              {fieldState.error ? (
-                <FormMessage>{fieldState.error.message}</FormMessage>
-              ) : null}
+              <DateTimePicker value={field.value} onChange={field.onChange} />
             </FormItem>
           )}
         />
@@ -298,10 +210,54 @@ export function GroupForm() {
       </form>
     </Form>
   );
+
+  // interface groupInfo {
+  //   name: string;
+  //   description: string;
+  //   groupCapacity: number;
+  //   beginAt: Date;
+  //   endAt: Date;
+  //   address: string;
+  //   isAgree?: boolean;
+  // }
+
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
+  // values: z.infer<typeof formSchema>
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    // // Do something with the form values.
+    // // ✅ This will be type-safe and validated.
+    // const newValue: groupInfo = {
+    //   ...values,
+    //   groupCapacity: Number(values.groupCapacity),
+    // };
+    // delete newValue.isAgree;
+    // console.log(newValue);
+    // try {
+    //   const response = await fetch(
+    //     `${process.env.NEXT_PUBLIC_API_LOCATION}/groups`,
+    //     {
+    //       method: 'POST',
+    //       headers: {
+    //         'Content-Type': 'application/json', // JSON 데이터임을 명시
+    //       },
+    //       body: JSON.stringify(newValue), // 객체를 JSON 문자열로 변환하여 body에 전달
+    //     }
+    //   );
+
+    //   // HTTP 상태 코드가 2xx 범위가 아닌 경우 오류로 처리
+    //   if (!response.ok) {
+    //     const errorData = await response.json();
+    //     console.error('HTTP error:', response.status, errorData);
+    //     throw new Error(`HTTP error! status: ${response.status}`);
+    //   }
+
+    //   // 정상적인 응답 처리
+    //   const data = await response.json();
+    //   console.log(data);
+    // } catch (error) {
+    //   // 네트워크 오류나 기타 문제 처리
+    //   console.error('Fetch error:', error);
+    // }
     console.log(values);
   }
 }
