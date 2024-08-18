@@ -28,7 +28,17 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { formSchema } from '../_lib/GroupFormSchema';
 import { DateTimePicker } from './time-picker/DateTimePicker';
 import { groupCapacitys } from '../_lib/Constants';
-
+import { useRouter } from 'next/navigation';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogOverlay,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import MapModal from './modal/MapModal';
+import { X } from 'lucide-react';
 // const formSchema = z
 //   .object({
 //     name: z
@@ -86,6 +96,7 @@ export function GroupForm() {
       isAgree: false,
     },
   });
+  const router = useRouter();
 
   return (
     <Form {...form}>
@@ -138,9 +149,18 @@ export function GroupForm() {
               <FormLabel>위치</FormLabel>
               <FormControl>
                 <div className="flex gap-4">
-                  <Button className="bg-white border-[#2990FF] border-[0.5px] hover:bg-slate-100 text-[#2990FF]">
-                    장소 검색
-                  </Button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        onClick={() => {}}
+                        className="bg-white border-[#2990FF] border-[0.5px] hover:bg-slate-100 text-[#2990FF]"
+                      >
+                        장소 검색
+                      </Button>
+                    </DialogTrigger>
+                    <DialogOverlay className='bg-white' />
+                    <MapModal />
+                  </Dialog>
                 </div>
               </FormControl>
             </FormItem>

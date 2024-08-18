@@ -78,6 +78,7 @@ const config = {
       height: {
         'headerHeight': '48px',
         'navbarHeight': '55px',
+        'modalHeight': 'calc(100% - 64px)',
       },
       margin: {
         'navbarHeight': '55px',
