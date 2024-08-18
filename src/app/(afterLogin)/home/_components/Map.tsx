@@ -2,7 +2,7 @@
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import { geolocation, groupData, location } from '@/app/_types/Map';
 import { useEffect, useState } from 'react';
-import RecommendCard from './map/RecommendCard';
+import RecommendCard from '../../group/register/_component/modal/_component/RecommendCard';
 import GroupCard from './map/GroupCard';
 
 interface MapContainerProps {
@@ -124,9 +124,6 @@ export default function MapContainer({ markers }: MapContainerProps) {
           />
         ))}
       </Map>
-      {card === 'recommend' && (
-        <RecommendCard address="" title="" setCard={setCard} />
-      )}
       {card === 'info' && <GroupCard groupData={groupData} setCard={setCard} />}
     </>
   );

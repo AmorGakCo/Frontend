@@ -20,3 +20,12 @@ export interface groupData {
     currentParticipants : number;
     address : string;
 }
+
+export interface markerType {
+  position: {
+    lat: number;
+    lng: number;
+  };
+  content: string;
+  address: string;
+}

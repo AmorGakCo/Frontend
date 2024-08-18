@@ -159,7 +159,7 @@ export function GroupForm() {
                       </Button>
                     </DialogTrigger>
                     <DialogOverlay className='bg-white' />
-                    <MapModal />
+                    <MapModal setAddress={field.onChange}/>
                   </Dialog>
                 </div>
               </FormControl>

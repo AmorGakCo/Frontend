@@ -1,16 +1,15 @@
 'use client';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
-import { geolocation, groupData, location } from '@/app/_types/Map';
+import { geolocation, groupData, location, markerType } from '@/app/_types/Map';
 import { useEffect, useState } from 'react';
+import RecommendCard from './RecommendCard';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import SearchKeyWord from './SearchKeyWord';
 // import RecommendCard from './map/RecommendCard';
 
 
-interface MapContainerProps {
-  markers: location[];
-}
-type CardType =  "none" | "info" | "recommend";
-
-export default function MapContainer({ markers }: MapContainerProps) {
+export default function MapContainer() {
   const [curLocation, setCurLocation] = useState<geolocation>({
     center: {
       lat: 37.54619261015808,
@@ -20,16 +19,44 @@ export default function MapContainer({ markers }: MapContainerProps) {
     errMsg: null,
     isLoading: true,
   });
-  // const [card, setCard] = useState<string>('none');
-  // const [groupData, setGroupData] = useState<groupData>({
-  //   hostNickname: '아모르겠고',
-  //   hostImgUrl: 'https://fakeimg',
-  //   beginAt: '2024-07-30T20:38:09.621499',
-  //   endAt: '2024-07-30T23:38:09.621502',
-  //   groupCapacity: 3,
-  //   currentParticipants: 3,
-  //   address: '서울특별시 종로구 신문로1가 23',
-  // });
+  const [selected, setSelected] = useState<markerType | ''>('');
+  const [map, setMap] = useState<kakao.maps.Map>();
+  const [markers, setMarkers] = useState<markerType[]>();
+  const [keyword, setKeyword] = useState<string>('');
+  useEffect(() => {
+    if (!map) return;
+    if (keyword !== '') {
+      const ps = new kakao.maps.services.Places();
+
+      ps.keywordSearch(keyword, (data, status, _pagination) => {
+        if (status === kakao.maps.services.Status.OK) {
+          // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
+          // LatLngBounds 객체에 좌표를 추가합니다
+          const bounds = new kakao.maps.LatLngBounds();
+          let markers = [];
+
+          for (var i = 0; i < data.length; i++) {
+            // @ts-ignore
+            markers.push({
+              position: {
+                lat: Number(data[i].y),
+                lng: Number(data[i].x),
+              },
+              content: data[i].place_name,
+              address: data[i].road_address_name,
+            });
+            // @ts-ignore
+            bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
+          }
+          setMarkers(markers);
+
+          // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
+          map.setBounds(bounds);
+        }
+      });
+    }
+  }, [map, keyword]);
+
   useEffect(() => {
     if (navigator.geolocation) {
       // GeoLocation을 이용해서 접속 위치를 얻어옵니다
@@ -62,9 +89,6 @@ export default function MapContainer({ markers }: MapContainerProps) {
     }
   }, []);
 
-  // // 이후에 API 연동 가능할 시 주변 그룹 불러오기
-  // // useGetGroups(curLocation);
-
   return (
     <>
       <Map // 지도를 표시할 Container
@@ -75,6 +99,7 @@ export default function MapContainer({ markers }: MapContainerProps) {
           height: '100%',
           flex: '1',
           display: 'flex',
+          position: 'relative',
         }}
         level={3} // 지도의 확대 레벨
         onDragEnd={(map) => {
@@ -96,10 +121,15 @@ export default function MapContainer({ markers }: MapContainerProps) {
             radius: 500,
           }));
         }}
+        onCreate={setMap}
       >
-        {markers.map((marker: location) => (
+        {markers?.map((marker: markerType) => (
           <MapMarker // 마커를 생성합니다
-            key={marker.groupId}
+            key={`marker-${marker.content}-${marker.position.lat},${marker.position.lng}`}
+            position={marker.position}
+            onClick={() => {
+              setSelected(marker);
+            }}
             image={{
               src: `/mapMarker.svg`, // 마커이미지의 주소입니다
               size: {
@@ -113,13 +143,10 @@ export default function MapContainer({ markers }: MapContainerProps) {
                 }, // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
               },
             }}
-            position={{
-              // 마커가 표시될 위치입니다
-              lat: marker.lat,
-              lng: marker.lng,
-            }}
           />
         ))}
+        {selected !== '' && <RecommendCard selected={selected} />}
+        <SearchKeyWord setSelected={setSelected} setKeyword={setKeyword} />
       </Map>
     </>
   );
