@@ -1,16 +1,24 @@
 'use client';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
-import { geolocation, groupData, location, markerType } from '@/app/_types/Map';
+import { geolocation, markerType } from '@/app/_types/Map';
 import { useEffect, useState } from 'react';
-import RecommendCard from './RecommendCard';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import SearchKeyWord from './SearchKeyWord';
+import RecommendCard from './map/RecommendCard';
+import SearchKeyWord from './map/SearchKeyWord';
+import { getRealLocation } from '../_lib/getRealLocation';
+import RealLocation from './map/RealLocation';
 // import RecommendCard from './map/RecommendCard';
-
 
 export default function MapContainer() {
   const [curLocation, setCurLocation] = useState<geolocation>({
+    center: {
+      lat: 37.54619261015808,
+      lng: 126.7303762529431,
+    },
+    radius: 300,
+    errMsg: null,
+    isLoading: true,
+  });
+  const [realLocation, setRealLocation] = useState<geolocation>({
     center: {
       lat: 37.54619261015808,
       lng: 126.7303762529431,
@@ -58,36 +66,14 @@ export default function MapContainer() {
   }, [map, keyword]);
 
   useEffect(() => {
-    if (navigator.geolocation) {
-      // GeoLocation을 이용해서 접속 위치를 얻어옵니다
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setCurLocation((prev) => ({
-            ...prev,
-            center: {
-              lat: position.coords.latitude, // 위도
-              lng: position.coords.longitude, // 경도
-            },
-            isLoading: false,
-          }));
-        },
-        (err) => {
-          setCurLocation((prev) => ({
-            ...prev,
-            errMsg: err.message,
-            isLoading: false,
-          }));
-        },
-      );
-    } else {
-      // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
-      setCurLocation((prev) => ({
-        ...prev,
-        errMsg: 'geolocation을 사용할수 없어요..',
-        isLoading: false,
-      }));
-    }
+    getRealLocation(setRealLocation);
   }, []);
+
+  useEffect(() => {
+    if (realLocation.errMsg === null) {
+      setCurLocation(realLocation);
+    }
+  }, [realLocation]);
 
   return (
     <>
@@ -123,6 +109,12 @@ export default function MapContainer() {
         }}
         onCreate={setMap}
       >
+        {realLocation.errMsg === null && (
+          <RealLocation
+            realLocation={realLocation}
+            setCurLocation={setCurLocation}
+          />
+        )}
         {markers?.map((marker: markerType) => (
           <MapMarker // 마커를 생성합니다
             key={`marker-${marker.content}-${marker.position.lat},${marker.position.lng}`}
