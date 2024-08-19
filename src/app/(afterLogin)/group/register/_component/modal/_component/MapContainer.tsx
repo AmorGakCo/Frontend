@@ -83,6 +83,7 @@ export default function MapContainer() {
         <MenuBar map = {map} setSelected={setSelected} setMarkers={setMarkers}/>
         {realLocation.errMsg === null && (
           <RealLocation
+            map = {map} 
             realLocation={realLocation}
             setCurLocation={setCurLocation}
           />
