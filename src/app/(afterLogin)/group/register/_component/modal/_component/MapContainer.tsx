@@ -6,6 +6,7 @@ import RecommendCard from './map/RecommendCard';
 import SearchKeyWord from './map/SearchKeyWord';
 import { getRealLocation } from '../_lib/getRealLocation';
 import RealLocation from './map/RealLocation';
+import MenuBar from './map/MenuBar';
 // import RecommendCard from './map/RecommendCard';
 
 export default function MapContainer() {
@@ -30,44 +31,15 @@ export default function MapContainer() {
   const [selected, setSelected] = useState<markerType | ''>('');
   const [map, setMap] = useState<kakao.maps.Map>();
   const [markers, setMarkers] = useState<markerType[]>();
-  const [keyword, setKeyword] = useState<string>('');
-  useEffect(() => {
-    if (!map) return;
-    if (keyword !== '') {
-      const ps = new kakao.maps.services.Places();
 
-      ps.keywordSearch(keyword, (data, status, _pagination) => {
-        if (status === kakao.maps.services.Status.OK) {
-          // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
-          // LatLngBounds 객체에 좌표를 추가합니다
-          const bounds = new kakao.maps.LatLngBounds();
-          let markers = [];
-
-          for (var i = 0; i < data.length; i++) {
-            // @ts-ignore
-            markers.push({
-              position: {
-                lat: Number(data[i].y),
-                lng: Number(data[i].x),
-              },
-              content: data[i].place_name,
-              address: data[i].road_address_name,
-            });
-            // @ts-ignore
-            bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
-          }
-          setMarkers(markers);
-
-          // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
-          map.setBounds(bounds);
-        }
-      });
-    }
-  }, [map, keyword]);
 
   useEffect(() => {
     getRealLocation(setRealLocation);
   }, []);
+
+ 
+
+  
 
   useEffect(() => {
     if (realLocation.errMsg === null) {
@@ -100,7 +72,6 @@ export default function MapContainer() {
         onZoomChanged={(map) => {
           const lat = map.getCenter().getLat();
           const lng = map.getCenter().getLng();
-          console.log(lat, lng);
           setCurLocation((prev) => ({
             ...prev,
             center: { lat: lat, lng: lng },
@@ -109,6 +80,7 @@ export default function MapContainer() {
         }}
         onCreate={setMap}
       >
+        <MenuBar map = {map} setSelected={setSelected} setMarkers={setMarkers}/>
         {realLocation.errMsg === null && (
           <RealLocation
             realLocation={realLocation}
@@ -138,7 +110,7 @@ export default function MapContainer() {
           />
         ))}
         {selected !== '' && <RecommendCard selected={selected} />}
-        <SearchKeyWord setSelected={setSelected} setKeyword={setKeyword} />
+        
       </Map>
     </>
   );
