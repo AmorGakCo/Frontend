@@ -21,7 +21,7 @@ const SearchKeyWord = ({
     }
   };
   return (
-    <div className="absolute top-4 left-4 flex w-10 max-w-sm items-center space-x-2 z-50">
+    <div className="flex w-10 max-w-sm items-center space-x-2 z-50">
       <Input
         type="text"
         value={inputValue}

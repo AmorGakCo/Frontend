@@ -1,9 +1,21 @@
-import { SetStateAction, useEffect, useState } from "react";
-import SearchKeyWord from "./SearchKeyWord";
-import { markerType } from "@/app/_types/Map";
+import { SetStateAction, useEffect, useState } from 'react';
+import SearchKeyWord from './SearchKeyWord';
+import { markerType } from '@/app/_types/Map';
+import MenuTypeSelector from './MenuTypeSelector';
 
-const MenuBar = ({map,setMarkers,setSelected}:{map:kakao.maps.Map | undefined, setMarkers:React.Dispatch<SetStateAction<markerType[] | undefined>>,setSelected:React.Dispatch<SetStateAction<''|markerType>>}) => {
+
+const MenuBar = ({
+  map,
+  setMarkers,
+  setSelected,
+}: {
+  map: kakao.maps.Map | undefined;
+  setMarkers: React.Dispatch<SetStateAction<markerType[] | undefined>>;
+  setSelected: React.Dispatch<SetStateAction<'' | markerType>>;
+}) => {
   const [keyword, setKeyword] = useState<string>('');
+  const [menuType, setMenuType] = useState<string>('');
+
   useEffect(() => {
     if (!map) return;
     if (keyword !== '') {
@@ -29,17 +41,20 @@ const MenuBar = ({map,setMarkers,setSelected}:{map:kakao.maps.Map | undefined, s
             // @ts-ignore
             bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
           }
-           // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
-           map.setBounds(bounds);
+          // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
+          map.setBounds(bounds);
           setMarkers(markers);
-
-         
         }
       });
     }
   }, [map, keyword]);
-  return (<>
-    <SearchKeyWord setSelected={setSelected} setKeyword={setKeyword} />
-  </>);
-}
+  return (
+    <div className="absolute top-4 left-4 flex flex-col gap-2 z-40">
+      <MenuTypeSelector menuType={menuType} setMenuType = {setMenuType}/>
+      {menuType === 'search' && (
+        <SearchKeyWord setSelected={setSelected} setKeyword={setKeyword} />
+      )}
+    </div>
+  );
+};
 export default MenuBar;
