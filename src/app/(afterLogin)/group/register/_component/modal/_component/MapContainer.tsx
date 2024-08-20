@@ -31,7 +31,7 @@ export default function MapContainer() {
   const [selectedMarker, setSelectedMarker] = useState<markerType | ''>('');
   const [map, setMap] = useState<kakao.maps.Map>();
   const [markers, setMarkers] = useState<markerType[]>();
-  const [markerHoverCard, setMarkerHoverCard] = useState<boolean>(false);
+  const [markerHoverCard, setMarkerHoverCard] = useState<markerType | ''>('');
   useEffect(() => {
     getRealLocation(setRealLocation);
   }, []);
@@ -99,8 +99,8 @@ export default function MapContainer() {
                 image={{
                   src: `/mapMarker.svg`, // 마커이미지의 주소입니다
                   size: {
-                    width: 24,
-                    height: 32,
+                    width: 28,
+                    height: 36,
                   }, // 마커이미지의 크기입니다
                   options: {
                     offset: {
@@ -111,15 +111,15 @@ export default function MapContainer() {
                 }}
                 onMouseOver={
                   // 마커에 마우스오버 이벤트가 발생하면 인포윈도우를 마커위에 표시합니다
-                  () => setMarkerHoverCard(true)
+                  () => setMarkerHoverCard(marker)
                 }
                 // 마커에 마우스아웃 이벤트를 등록합니다
                 onMouseOut={
                   // 마커에 마우스아웃 이벤트가 발생하면 인포윈도우를 제거합니다
-                  () => setMarkerHoverCard(false)
+                  () => setMarkerHoverCard('')
                 }
               >
-              <div className="w-auto h-auto p-1">{marker.content}</div>
+              {markerHoverCard === marker && (<div className="w-auto h-auto p-1">{marker.content}</div>)}
               </MapMarker>
         ))}
         {selectedMarker !== '' && (
