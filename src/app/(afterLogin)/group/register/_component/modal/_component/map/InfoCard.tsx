@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
-interface SelectCardProps {
+interface InfoCardProps {
   selectedMarker: {position: {
     lat: number;
     lng: number;
@@ -16,7 +16,7 @@ interface SelectCardProps {
   address: string;
 }
 }
-export default function RecommendCard({selectedMarker}:SelectCardProps) {
+export default function InfoCard({selectedMarker}:InfoCardProps) {
   return (
     <Card className="z-30 w-[328px] absolute bottom-6 left-1/2 right-1/2 -translate-x-1/2">
       <CardHeader>
