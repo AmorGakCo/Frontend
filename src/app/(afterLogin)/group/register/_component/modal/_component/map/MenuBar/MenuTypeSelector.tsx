@@ -14,7 +14,11 @@ const MenuTypeSelector = ({ menuType, setMenuType }: MenuTypeSelectorProps) => {
             menuType === 'search' && 'bg-slate-700'
           } `}
           onClick={() => {
-            setMenuType('search');
+            if (menuType !== 'search') {
+              setMenuType('search');
+            } else {
+              setMenuType('');
+            }
           }}
         >
           <AvatarImage className="w-6 h-6" src={'/search.png'} />
@@ -26,7 +30,11 @@ const MenuTypeSelector = ({ menuType, setMenuType }: MenuTypeSelectorProps) => {
             menuType === 'category' && 'bg-slate-700'
           } `}
           onClick={() => {
-            setMenuType('category');
+            if (menuType !== 'category') {
+              setMenuType('category');
+            } else {
+              setMenuType('');
+            }
           }}
         >
           <AvatarImage className="w-6 h-6" src={'/distance.png'} />
