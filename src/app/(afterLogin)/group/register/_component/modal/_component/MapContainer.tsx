@@ -80,7 +80,7 @@ export default function MapContainer() {
         }}
         onCreate={setMap}
       >
-        <MenuBar map = {map} setSelectedMarker={setSelectedMarker} setMarkers={setMarkers}/>
+        <MenuBar map = {map} curLocation = {curLocation} setSelectedMarker={setSelectedMarker} setMarkers={setMarkers}/>
         {realLocation.errMsg === null && (
           <RealLocation
             map = {map} 
@@ -110,6 +110,7 @@ export default function MapContainer() {
                 }, // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
               },
             }}
+            
           />
         ))}
         {selectedMarker !== '' && <RecommendCard selectedMarker={selectedMarker} />}

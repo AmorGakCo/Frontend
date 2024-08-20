@@ -1,16 +1,18 @@
 import { SetStateAction, useEffect, useState } from 'react';
 import SearchKeyWord from './MenuBar/SearchKeyWord';
-import { CategoryType, markerType } from '@/app/_types/Map';
+import { CategoryType, geolocation, markerType } from '@/app/_types/Map';
 import MenuTypeSelector from './MenuBar/MenuTypeSelector';
 import CategorySelector from './MenuBar/CategorySelector';
 
 
 const MenuBar = ({
   map,
+  curLocation,
   setMarkers,
   setSelectedMarker,
 }: {
   map: kakao.maps.Map | undefined;
+  curLocation: geolocation;
   setMarkers: React.Dispatch<SetStateAction<markerType[] | undefined>>;
   setSelectedMarker: React.Dispatch<SetStateAction<'' | markerType>>;
 }) => {
@@ -78,7 +80,7 @@ ps.categorySearch(category, placesSearchCB, {useMapBounds:true});
 
 // 키워드 검색 완료 시 호출되는 콜백함수 입니다
 
-  }}, [map, category]);
+  }}, [map, category,curLocation]);
   return (
     <div className="absolute top-4 left-4 flex flex-col items-start gap-2 z-40">
       <MenuTypeSelector menuType={menuType} setMenuType = {setMenuType}/>
