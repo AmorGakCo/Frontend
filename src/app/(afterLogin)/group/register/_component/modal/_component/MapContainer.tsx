@@ -3,7 +3,7 @@ import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import { geolocation, markerType } from '@/app/_types/Map';
 import { useEffect, useState } from 'react';
 import RecommendCard from './map/RecommendCard';
-import SearchKeyWord from './map/SearchKeyWord';
+import SearchKeyWord from './map/MenuBar/SearchKeyWord';
 import { getRealLocation } from '../_lib/getRealLocation';
 import RealLocation from './map/RealLocation';
 import MenuBar from './map/MenuBar';
@@ -28,7 +28,7 @@ export default function MapContainer() {
     errMsg: null,
     isLoading: true,
   });
-  const [selected, setSelected] = useState<markerType | ''>('');
+  const [selectedMarker, setSelectedMarker] = useState<markerType | ''>('');
   const [map, setMap] = useState<kakao.maps.Map>();
   const [markers, setMarkers] = useState<markerType[]>();
 
@@ -80,7 +80,7 @@ export default function MapContainer() {
         }}
         onCreate={setMap}
       >
-        <MenuBar map = {map} setSelected={setSelected} setMarkers={setMarkers}/>
+        <MenuBar map = {map} setSelectedMarker={setSelectedMarker} setMarkers={setMarkers}/>
         {realLocation.errMsg === null && (
           <RealLocation
             map = {map} 
@@ -88,12 +88,14 @@ export default function MapContainer() {
             setCurLocation={setCurLocation}
           />
         )}
+
+
         {markers?.map((marker: markerType) => (
           <MapMarker // 마커를 생성합니다
             key={`marker-${marker.content}-${marker.position.lat},${marker.position.lng}`}
             position={marker.position}
             onClick={() => {
-              setSelected(marker);
+              setSelectedMarker(marker);
             }}
             image={{
               src: `/mapMarker.svg`, // 마커이미지의 주소입니다
@@ -110,7 +112,7 @@ export default function MapContainer() {
             }}
           />
         ))}
-        {selected !== '' && <RecommendCard selected={selected} />}
+        {selectedMarker !== '' && <RecommendCard selectedMarker={selectedMarker} />}
         
       </Map>
     </>

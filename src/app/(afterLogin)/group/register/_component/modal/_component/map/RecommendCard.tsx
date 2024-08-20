@@ -8,7 +8,7 @@ import {
 import { Button } from '@/components/ui/button';
 
 interface SelectCardProps {
-  selected: {position: {
+  selectedMarker: {position: {
     lat: number;
     lng: number;
   };
@@ -16,13 +16,13 @@ interface SelectCardProps {
   address: string;
 }
 }
-export default function RecommendCard({selected}:SelectCardProps) {
+export default function RecommendCard({selectedMarker}:SelectCardProps) {
   return (
     <Card className="z-30 w-[328px] absolute bottom-6 left-1/2 right-1/2 -translate-x-1/2">
       <CardHeader>
-        <CardTitle className="text-center underline text-title">{selected.content}</CardTitle>
+        <CardTitle className="text-center underline text-title">{selectedMarker.content}</CardTitle>
         <CardDescription className="text-center">
-          {selected.address}
+          {selectedMarker.address}
         </CardDescription>
       </CardHeader>
       <CardFooter className="flex justify-center">

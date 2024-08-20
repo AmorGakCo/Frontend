@@ -1,21 +1,23 @@
 import { SetStateAction, useEffect, useState } from 'react';
-import SearchKeyWord from './SearchKeyWord';
-import { markerType } from '@/app/_types/Map';
-import MenuTypeSelector from './MenuTypeSelector';
+import SearchKeyWord from './MenuBar/SearchKeyWord';
+import { CategoryType, markerType } from '@/app/_types/Map';
+import MenuTypeSelector from './MenuBar/MenuTypeSelector';
+import CategorySelector from './MenuBar/CategorySelector';
 
 
 const MenuBar = ({
   map,
   setMarkers,
-  setSelected,
+  setSelectedMarker,
 }: {
   map: kakao.maps.Map | undefined;
   setMarkers: React.Dispatch<SetStateAction<markerType[] | undefined>>;
-  setSelected: React.Dispatch<SetStateAction<'' | markerType>>;
+  setSelectedMarker: React.Dispatch<SetStateAction<'' | markerType>>;
 }) => {
-  const [keyword, setKeyword] = useState<string>('');
+  
   const [menuType, setMenuType] = useState<string>('');
-
+  const [keyword, setKeyword] = useState<string>('');
+  const [category, setCategory] = useState<CategoryType>('');
   useEffect(() => {
     if (!map) return;
     if (keyword !== '') {
@@ -48,12 +50,42 @@ const MenuBar = ({
       });
     }
   }, [map, keyword]);
+  
+  useEffect(() => {
+    if (!map) return;
+
+// 장소 검색 객체를 생성합니다
+var ps = new kakao.maps.services.Places(map); 
+const placesSearchCB =  (result: kakao.maps.services.PlacesSearchResult, status: kakao.maps.services.Status, pagination: kakao.maps.Pagination) => {
+  let markers:markerType[] = []
+  if (status === kakao.maps.services.Status.OK) {
+      for (var i=0; i<result.length; i++) {
+        markers.push({
+          position: {
+            lat: Number(result[i].y),
+            lng: Number(result[i].x),
+          },
+          content: result[i].place_name,
+          address: result[i].road_address_name,
+        });
+      }    
+      setMarkers(markers);   
+  }
+};
+// 카테고리로 은행을 검색합니다
+if (category!=='' && menuType == 'category'){
+ps.categorySearch(category, placesSearchCB, {useMapBounds:true}); 
+
+// 키워드 검색 완료 시 호출되는 콜백함수 입니다
+
+  }}, [map, category]);
   return (
-    <div className="absolute top-4 left-4 flex flex-col gap-2 z-40">
+    <div className="absolute top-4 left-4 flex flex-col items-start gap-2 z-40">
       <MenuTypeSelector menuType={menuType} setMenuType = {setMenuType}/>
       {menuType === 'search' && (
-        <SearchKeyWord setSelected={setSelected} setKeyword={setKeyword} />
+        <SearchKeyWord setSelectedMarker={setSelectedMarker} setKeyword={setKeyword} />
       )}
+      {menuType === 'category' && (<CategorySelector setSelectedMarker = {setSelectedMarker} setCategory = {setCategory}/>)}
     </div>
   );
 };

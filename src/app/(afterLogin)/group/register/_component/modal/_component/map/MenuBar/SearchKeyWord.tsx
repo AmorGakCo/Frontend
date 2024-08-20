@@ -5,15 +5,16 @@ import React from 'react';
 import { useState } from 'react';
 
 const SearchKeyWord = ({
-  setKeyword,setSelected
+  setKeyword,setSelectedMarker
 }: {
   setKeyword: React.Dispatch<React.SetStateAction<string>>;
-  setSelected: React.Dispatch<React.SetStateAction<markerType|''>>;
+  setSelectedMarker: React.Dispatch<React.SetStateAction<markerType|''>>;
 }) => {
   const [inputValue, setInputValue] = useState<string>('');
+  
   const activeSearch = () => {
     setKeyword(inputValue);
-    setSelected('')
+    setSelectedMarker('')
   };
   const activeEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
