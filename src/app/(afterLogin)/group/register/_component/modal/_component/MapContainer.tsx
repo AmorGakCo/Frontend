@@ -1,7 +1,7 @@
 'use client';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
-import { geolocation, markerType } from '@/app/_types/Map';
-import { useEffect, useState } from 'react';
+import { addressInfo, geolocation, markerType } from '@/app/_types/Map';
+import { SetStateAction, useEffect, useState } from 'react';
 import InfoCard from './map/InfoCard';
 import { getRealLocation } from '../_lib/getRealLocation';
 import RealLocation from './map/RealLocation';
@@ -9,7 +9,7 @@ import MenuBar from './map/MenuBar';
 
 // import RecommendCard from './map/RecommendCard';
 
-export default function MapContainer() {
+export default function MapContainer({setAddressInfo}:{setAddressInfo:React.Dispatch<SetStateAction<addressInfo>>}) {
   const [curLocation, setCurLocation] = useState<geolocation>({
     center: {
       lat: 37.54619261015808,
@@ -123,7 +123,7 @@ export default function MapContainer() {
               </MapMarker>
         ))}
         {selectedMarker !== '' && (
-          <InfoCard selectedMarker={selectedMarker} />
+          <InfoCard selectedMarker={selectedMarker} setAddressInfo={setAddressInfo}/>
         )}
       </Map>
     </>

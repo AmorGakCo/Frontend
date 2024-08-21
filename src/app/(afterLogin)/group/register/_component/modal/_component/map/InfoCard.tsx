@@ -6,28 +6,51 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { SetStateAction } from 'react';
+import { addressInfo } from '@/app/_types/Map';
+import { DialogClose } from '@/components/ui/dialog';
 
 interface InfoCardProps {
-  selectedMarker: {position: {
-    lat: number;
-    lng: number;
+  selectedMarker: {
+    position: {
+      lat: number;
+      lng: number;
+    };
+    content: string;
+    address: string;
   };
-  content: string;
-  address: string;
+  setAddressInfo: React.Dispatch<SetStateAction<addressInfo>>;
 }
-}
-export default function InfoCard({selectedMarker}:InfoCardProps) {
+export default function InfoCard({
+  selectedMarker,
+  setAddressInfo,
+}: InfoCardProps) {
   return (
     <Card className="z-30 w-[328px] absolute bottom-6 left-1/2 right-1/2 -translate-x-1/2">
       <CardHeader>
-        <CardTitle className="text-center underline text-title">{selectedMarker.content}</CardTitle>
+        <CardTitle className="text-center underline text-title">
+          {selectedMarker.content}
+        </CardTitle>
         <CardDescription className="text-center">
           {selectedMarker.address}
         </CardDescription>
       </CardHeader>
       <CardFooter className="flex justify-center">
-        <Button>선택</Button>
+        <DialogClose>
+          <Button
+          onClick={() => {
+            setAddressInfo({
+              lat: selectedMarker.position.lat,
+              lng: selectedMarker.position.lng,
+              address: selectedMarker.address,
+              content: selectedMarker.content
+            });
+          }}
+        >
+          선택
+        </Button>
+        </DialogClose>
       </CardFooter>
     </Card>
   );
-};
+}

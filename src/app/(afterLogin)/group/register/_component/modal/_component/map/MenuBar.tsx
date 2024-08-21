@@ -67,6 +67,7 @@ const placesSearchCB =  (result: kakao.maps.services.PlacesSearchResult, status:
             lat: Number(result[i].y),
             lng: Number(result[i].x),
           },
+
           content: result[i].place_name,
           address: result[i].road_address_name,
         });

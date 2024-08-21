@@ -16,8 +16,12 @@ export const formSchema = z
       });
     }
   }),
-  address: z.string().min(10, {
-    message: '그룹 이름은 최소 10글자 이상이어야 합니다.',
+  addressInfo: z.object({
+    address: z.string(),     // 주소는 문자열 타입
+    content: z.string(),     // 주소는 문자열 타입
+    lat: z.number(),         // 위도는 숫자 타입
+    lng: z.number(),         // 경도는 숫자 타입
+    
   }),
   description: z
     .string()

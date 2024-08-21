@@ -38,7 +38,13 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import MapModal from './modal/MapModal';
-import { X } from 'lucide-react';
+import Image from 'next/image';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 // const formSchema = z
 //   .object({
 //     name: z
@@ -92,7 +98,6 @@ export function GroupForm() {
     mode: 'onChange',
     defaultValues: {
       name: '',
-      address: 'wqeqqeqweqw',
       isAgree: false,
     },
   });
@@ -143,29 +148,61 @@ export function GroupForm() {
         />
         <FormField
           control={form.control}
-          name="address"
+          name="addressInfo"
           render={({ field }) => (
             <FormItem>
               <FormLabel>위치</FormLabel>
+              <FormDescription>
+                {field.value && (
+                  <div>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Button className="flex gap-2 bg-white border-[#a7d1ff] border-[0.5px] px-2 py-1 hover:bg-slate-100 ">
+                            <Image
+                              width={24}
+                              height={24}
+                              style={{
+                                filter:
+                                  'opacity(.5) drop-shadow(0 0 0 #2990FF)',
+                              }}
+                              src="/distance.png"
+                              alt="location"
+                            />
+                            <div className="text-[#2990FF]">
+                              {field.value.content}
+                            </div>
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent className = 'p-4 flex flex-col gap-2'>
+                          <p>{field.value.address}</p>
+                          <p>{field.value.content}</p>
+                        
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                )}
+              </FormDescription>
               <FormControl>
-                <div className="flex gap-4">
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button
-                        onClick={() => {}}
-                        className="bg-white border-[#2990FF] border-[0.5px] hover:bg-slate-100 text-[#2990FF]"
-                      >
-                        장소 검색
-                      </Button>
-                    </DialogTrigger>
-                    <DialogOverlay className='bg-white' />
-                    <MapModal setAddress={field.onChange}/>
-                  </Dialog>
-                </div>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      onClick={() => {}}
+                      className="bg-white border-[#2990FF] border-[0.5px] hover:bg-slate-100 text-[#2990FF]"
+                    >
+                      장소 검색
+                    </Button>
+                  </DialogTrigger>
+                  <DialogOverlay className="bg-white" />
+                  <MapModal setAddressInfo={field.onChange} />
+                </Dialog>
               </FormControl>
             </FormItem>
           )}
         />
+        {/* Address Field */}
+
         <FormField
           control={form.control}
           name="description"

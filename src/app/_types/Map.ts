@@ -1,3 +1,9 @@
+export interface addressInfo {
+  lat:number;
+  lng: number;
+  address: string;
+  content: string;
+}
 export interface location {
   lat:number;
   lng:number;
