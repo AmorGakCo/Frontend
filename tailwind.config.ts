@@ -18,6 +18,10 @@ const config = {
       },
     },
     extend: {
+      fontSize: {
+        "2xs": '8px',
+      },
+
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
       },
@@ -85,6 +89,7 @@ const config = {
       },
       textColor: {
         'title': '#2990FF',
+        'secondary': '#757575',
       },
       minHeight: {
         'default': 'calc(100dvh - 108px)',    
