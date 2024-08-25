@@ -45,52 +45,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-// const formSchema = z
-//   .object({
-//     name: z
-//       .string()
-//       .min(2, {
-//         message: '그룹 이름은 최소 1글자 이상이어야 합니다.',
-//       })
-//       .max(10),
-//     groupCapacity: z.string().superRefine((data, ctx) => {
-//       if (1 > Number(data) || Number(data) > 12) {
-//         ctx.addIssue({
-//           code: z.ZodIssueCode.custom,
-//           message: '그룹 인원수는 1명에서 12명까지만 가능합니다.',
-//         });
-//       }
-//     }),
-//     address: z.string().min(10, {
-//       message: '그룹 이름은 최소 10글자 이상이어야 합니다.',
-//     }),
-//     description: z
-//       .string()
-//       .min(5, { message: '그룹 설명은 최소 5글자 이상은 적어주세요.' })
-//       .max(100, { message: '그룹 설명은 최소 100글자를 넘을 수는 없습니다.' }),
-//     beginAt: z
-//       .date()
-//       .min(new Date(), { message: '현재 시간보다 과거에 만날 수는 없습니다.' }),
-//     endAt: z
-//       .date()
-//       .min(new Date(), { message: '현재 시간보다 과거에 만날 수는 없습니다.' }),
-//     isAgree: z.boolean()
-//   }).superRefine((data, ctx) => {
-//     if (!data.isAgree) {
-//       ctx.addIssue({
-//         code: z.ZodIssueCode.custom,
-//         path: ['isAgree'],
-//         message: '약관에 동의하셔야 그룹이 생성됩니다.',
-//       });
-//     }
-//     if (data.endAt <= data.beginAt) {
-//       ctx.addIssue({
-//         code: z.ZodIssueCode.custom,
-//         path: ['endAt'],
-//         message: '종료일자는 시작일자보다 이후여야 합니다.',
-//       });
-//     }
-//   });
+
 
 export function GroupForm() {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -149,7 +104,7 @@ export function GroupForm() {
         <FormField
           control={form.control}
           name="addressInfo"
-          render={({ field }) => (
+          render={({ field}) => (
             <FormItem>
               <FormLabel>위치</FormLabel>
               <FormDescription>
@@ -174,10 +129,9 @@ export function GroupForm() {
                             </div>
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent className = 'p-4 flex flex-col gap-2'>
+                        <TooltipContent className="p-4 flex flex-col gap-2">
                           <p>{field.value.address}</p>
                           <p>{field.value.content}</p>
-                        
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -198,6 +152,7 @@ export function GroupForm() {
                   <MapModal setAddressInfo={field.onChange} />
                 </Dialog>
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -268,53 +223,22 @@ export function GroupForm() {
     </Form>
   );
 
-  // interface groupInfo {
-  //   name: string;
-  //   description: string;
-  //   groupCapacity: number;
-  //   beginAt: Date;
-  //   endAt: Date;
-  //   address: string;
-  //   isAgree?: boolean;
-  // }
-
-  // 2. Define a submit handler.
-  // values: z.infer<typeof formSchema>
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // // Do something with the form values.
-    // // ✅ This will be type-safe and validated.
-    // const newValue: groupInfo = {
-    //   ...values,
-    //   groupCapacity: Number(values.groupCapacity),
-    // };
-    // delete newValue.isAgree;
-    // console.log(newValue);
-    // try {
-    //   const response = await fetch(
-    //     `${process.env.NEXT_PUBLIC_API_LOCATION}/groups`,
-    //     {
-    //       method: 'POST',
-    //       headers: {
-    //         'Content-Type': 'application/json', // JSON 데이터임을 명시
-    //       },
-    //       body: JSON.stringify(newValue), // 객체를 JSON 문자열로 변환하여 body에 전달
-    //     }
-    //   );
-
-    //   // HTTP 상태 코드가 2xx 범위가 아닌 경우 오류로 처리
-    //   if (!response.ok) {
-    //     const errorData = await response.json();
-    //     console.error('HTTP error:', response.status, errorData);
-    //     throw new Error(`HTTP error! status: ${response.status}`);
-    //   }
-
-    //   // 정상적인 응답 처리
-    //   const data = await response.json();
-    //   console.log(data);
-    // } catch (error) {
-    //   // 네트워크 오류나 기타 문제 처리
-    //   console.error('Fetch error:', error);
-    // }
-    console.log(values);
+    const { 
+      addressInfo: { address, latitude, longitude,...restAddressInfo }, 
+      isAgree, 
+      groupCapacity,
+      ...restValues 
+    } = values;
+    
+    const api_values = {
+      ...restValues,
+      address,
+      latitude,
+      longitude,
+      groupCapacity: Number(groupCapacity),
+    };
+    
+    console.log(api_values);
   }
 }

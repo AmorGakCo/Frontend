@@ -17,11 +17,10 @@ export const formSchema = z
     }
   }),
   addressInfo: z.object({
+    latitude: z.number(),         // 위도는 숫자 타입
+    longitude: z.number(),         // 경도는 숫자 타입
     address: z.string(),     // 주소는 문자열 타입
     content: z.string(),     // 주소는 문자열 타입
-    lat: z.number(),         // 위도는 숫자 타입
-    lng: z.number(),         // 경도는 숫자 타입
-    
   }),
   description: z
     .string()

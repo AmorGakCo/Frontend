@@ -40,8 +40,8 @@ export default function InfoCard({
           <Button
           onClick={() => {
             setAddressInfo({
-              lat: selectedMarker.position.lat,
-              lng: selectedMarker.position.lng,
+              latitude: selectedMarker.position.lat,
+              longitude: selectedMarker.position.lng,
               address: selectedMarker.address,
               content: selectedMarker.content
             });
