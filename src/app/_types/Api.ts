@@ -16,3 +16,12 @@ export interface participantsHistory {
   beginAt : string,
   endAt : string
 }
+
+export interface postCurLocation {
+  southWestLat: number;
+  southWestLon: number;
+  northEastLat: number;
+  northEastLon: number;
+  centerLat: number;
+  centerLon: number;
+}

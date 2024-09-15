@@ -1,22 +1,26 @@
 'use client';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
-import { geolocation, groupData, location } from '@/app/_types/Map';
-import { useEffect, useState } from 'react';
+import { groupData, location } from '@/app/_types/Map';
+import { postCurLocation } from '@/app/_types/Api';
+import { useEffect, useRef, useState } from 'react';
 import GroupCard from './map/GroupCard';
 
 interface MapContainerProps {
   markers: location[];
 }
-type CardType =  "none" | "info" | "recommend";
+type CardType = 'none' | 'info' | 'recommend';
 
+interface curLocationType extends postCurLocation {
+  isLoading: boolean;
+}
 export default function MapContainer({ markers }: MapContainerProps) {
-  const [curLocation, setCurLocation] = useState<geolocation>({
-    center: {
-      lat: 37.54619261015808,
-      lng: 126.7303762529431,
-    },
-    radius: 300,
-    errMsg: null,
+  const [curLocation, setCurLocation] = useState<curLocationType>({
+    southWestLat: 0,
+    southWestLon: 0,
+    northEastLat: 0,
+    northEastLon: 0,
+    centerLat: 0,
+    centerLon: 0,
     isLoading: true,
   });
   const [card, setCard] = useState<string>('none');
@@ -29,6 +33,7 @@ export default function MapContainer({ markers }: MapContainerProps) {
     currentParticipants: 3,
     address: '서울특별시 종로구 신문로1가 23',
   });
+  const mapRef = useRef<kakao.maps.Map>(null);
   useEffect(() => {
     if (navigator.geolocation) {
       // GeoLocation을 이용해서 접속 위치를 얻어옵니다
@@ -36,38 +41,50 @@ export default function MapContainer({ markers }: MapContainerProps) {
         (position) => {
           setCurLocation((prev) => ({
             ...prev,
-            center: {
-              lat: position.coords.latitude, // 위도
-              lng: position.coords.longitude, // 경도
-            },
-            isLoading: false,
+            centerLat: position.coords.latitude, // 위도
+            centerLon: position.coords.longitude, // 경도
           }));
         },
         (err) => {
-          setCurLocation((prev) => ({
-            ...prev,
-            errMsg: err.message,
-            isLoading: false,
-          }));
+          alert(err.message);
         },
       );
-    } else {
-      // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
-      setCurLocation((prev) => ({
-        ...prev,
-        errMsg: 'geolocation을 사용할수 없어요..',
-        isLoading: false,
-      }));
     }
   }, []);
 
   // 이후에 API 연동 가능할 시 주변 그룹 불러오기
   // useGetGroups(curLocation);
-
+  // 지도의 경계 좌표와 중심 좌표를 가져오는 함수
+  const handleBoundsChanged = (map: kakao.maps.Map) => {
+    const bounds = map.getBounds();
+    const sw = bounds.getSouthWest();
+    const ne = bounds.getNorthEast();
+    const center = map.getCenter();
+    if (
+      sw.getLat() !== curLocation.southWestLat ||
+      sw.getLng() !== curLocation.southWestLon ||
+      ne.getLat() !== curLocation.northEastLat ||
+      ne.getLng() !== curLocation.northEastLon ||
+      center.getLat() !== curLocation.centerLat ||
+      center.getLng() !== curLocation.centerLon
+    ) {
+      // 상태 업데이트 (남서쪽, 북동쪽, 중심 좌표)
+      setCurLocation(() => ({
+        southWestLat: sw.getLat(),
+        southWestLon: sw.getLng(),
+        northEastLat: ne.getLat(),
+        northEastLon: ne.getLng(),
+        centerLat: center.getLat(),
+        centerLon: center.getLng(),
+        isLoading: false,
+      }));
+    }
+  };
+  console.log(curLocation);
   return (
     <>
       <Map // 지도를 표시할 Container
-        center={curLocation.center}
+        center={{ lat: curLocation.centerLat, lng: curLocation.centerLon }}
         style={{
           // 지도의 크기
           width: '100%',
@@ -76,25 +93,36 @@ export default function MapContainer({ markers }: MapContainerProps) {
           display: 'flex',
         }}
         level={3} // 지도의 확대 레벨
-        onDragEnd={(map) => {
-          const lat = map.getCenter().getLat();
-          const lng = map.getCenter().getLng();
-          setCurLocation((prev) => ({
-            ...prev,
-            center: { lat: lat, lng: lng },
-            radius: 500,
-          }));
+        ref={mapRef}
+        onIdle={(map) => {
+          setCurLocation((prev) => ({ ...prev, isLoading: true }));
+          handleBoundsChanged(map);
         }}
-        onZoomChanged={(map) => {
-          const lat = map.getCenter().getLat();
-          const lng = map.getCenter().getLng();
-          console.log(lat, lng);
-          setCurLocation((prev) => ({
-            ...prev,
-            center: { lat: lat, lng: lng },
-            radius: 500,
-          }));
+        onCreate={(map) => {
+          if (curLocation.isLoading === true) {
+            handleBoundsChanged(map);
+          }
         }}
+        // onDragEnd={(map) => {
+        //   setCurLocation(() => ({
+        //     centerLat: map.getCenter().getLat(),
+        //     centerLon: map.getCenter().getLng(),
+        //     southWestLat: map.getBounds().getSouthWest().getLat(),
+        //     northEastLat: map.getBounds().getSouthWest().getLat(),
+        //     southWestLon: map.getBounds().getSouthWest().getLng(),
+        //     northEastLon: map.getBounds().getNorthEast().getLng(),
+        //   }));
+        // }}
+        // onZoomChanged={(map) => {
+        //   setCurLocation(() => ({
+        //     centerLat: map.getCenter().getLat(),
+        //     centerLon: map.getCenter().getLng(),
+        //     southWestLat: map.getBounds().getSouthWest().getLat(),
+        //     northEastLat: map.getBounds().getSouthWest().getLat(),
+        //     southWestLon: map.getBounds().getSouthWest().getLng(),
+        //     northEastLon: map.getBounds().getNorthEast().getLng(),
+        //   }));
+        // }}
       >
         {markers.map((marker: location) => (
           <MapMarker // 마커를 생성합니다
