@@ -5,15 +5,13 @@ import { postCurLocation } from '@/app/_types/Api';
 import { useEffect, useRef, useState } from 'react';
 import GroupCard from './map/GroupCard';
 
-interface MapContainerProps {
-  markers: location[];
-}
 type CardType = 'none' | 'info' | 'recommend';
 
 interface curLocationType extends postCurLocation {
   isLoading: boolean;
 }
-export default function MapContainer({ markers }: MapContainerProps) {
+export default function MapContainer() {
+  const [groups, setGroups] = useState<location[] | []>([]);
   const [curLocation, setCurLocation] = useState<curLocationType>({
     southWestLat: 0,
     southWestLon: 0,
@@ -80,7 +78,33 @@ export default function MapContainer({ markers }: MapContainerProps) {
       }));
     }
   };
-  console.log(curLocation);
+  async function fetchData(apiData:postCurLocation) {
+    try {
+      const queryParams = new URLSearchParams(
+        Object.entries(apiData).map(([key, value]) => [key, value.toString()])
+      ).toString();
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_LOCATION}/groups/locations?${queryParams}`, {
+        method: "GET",
+        cache: "no-cache",
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+  
+      const {data} = await response.json();  
+      setGroups(data.locations);
+    } catch (error) {
+      console.error("Failed to fetch data:", error);
+    }
+  }
+  console.log(groups);
+  useEffect(() => {
+    const {isLoading,...apiData} = curLocation;
+    if (isLoading === false){
+    fetchData(apiData);
+    }
+  },[curLocation]);
   return (
     <>
       <Map // 지도를 표시할 Container
@@ -124,7 +148,7 @@ export default function MapContainer({ markers }: MapContainerProps) {
         //   }));
         // }}
       >
-        {markers.map((marker: location) => (
+        {groups?.map((marker: location) => (
           <MapMarker // 마커를 생성합니다
             key={marker.groupId}
             image={{
