@@ -1,9 +1,11 @@
 'use client';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
-import { groupData, location } from '@/app/_types/Map';
-import { postCurLocation } from '@/app/_types/Api';
+import { groupData } from '@/app/_types/Map';
+import { postCurLocation,apiLocation } from '@/app/_types/Api';
 import { useEffect, useRef, useState } from 'react';
 import GroupCard from './map/GroupCard';
+import { fetchNearGroups } from '../_lib/fetchNearGroups';
+import { handleBoundsChanged } from '../_lib/handleBoundsChanged';
 
 type CardType = 'none' | 'info' | 'recommend';
 
@@ -11,7 +13,7 @@ interface curLocationType extends postCurLocation {
   isLoading: boolean;
 }
 export default function MapContainer() {
-  const [groups, setGroups] = useState<location[] | []>([]);
+  const [groups, setGroups] = useState<apiLocation[] | []>([]);
   const [curLocation, setCurLocation] = useState<curLocationType>({
     southWestLat: 0,
     southWestLon: 0,
@@ -53,56 +55,12 @@ export default function MapContainer() {
   // 이후에 API 연동 가능할 시 주변 그룹 불러오기
   // useGetGroups(curLocation);
   // 지도의 경계 좌표와 중심 좌표를 가져오는 함수
-  const handleBoundsChanged = (map: kakao.maps.Map) => {
-    const bounds = map.getBounds();
-    const sw = bounds.getSouthWest();
-    const ne = bounds.getNorthEast();
-    const center = map.getCenter();
-    if (
-      sw.getLat() !== curLocation.southWestLat ||
-      sw.getLng() !== curLocation.southWestLon ||
-      ne.getLat() !== curLocation.northEastLat ||
-      ne.getLng() !== curLocation.northEastLon ||
-      center.getLat() !== curLocation.centerLat ||
-      center.getLng() !== curLocation.centerLon
-    ) {
-      // 상태 업데이트 (남서쪽, 북동쪽, 중심 좌표)
-      setCurLocation(() => ({
-        southWestLat: sw.getLat(),
-        southWestLon: sw.getLng(),
-        northEastLat: ne.getLat(),
-        northEastLon: ne.getLng(),
-        centerLat: center.getLat(),
-        centerLon: center.getLng(),
-        isLoading: false,
-      }));
-    }
-  };
-  async function fetchData(apiData:postCurLocation) {
-    try {
-      const queryParams = new URLSearchParams(
-        Object.entries(apiData).map(([key, value]) => [key, value.toString()])
-      ).toString();
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_LOCATION}/groups/locations?${queryParams}`, {
-        method: "GET",
-        cache: "no-cache",
-      });
   
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
-      }
   
-      const {data} = await response.json();  
-      setGroups(data.locations);
-    } catch (error) {
-      console.error("Failed to fetch data:", error);
-    }
-  }
-  console.log(groups);
   useEffect(() => {
     const {isLoading,...apiData} = curLocation;
     if (isLoading === false){
-    fetchData(apiData);
+    fetchNearGroups(apiData,setGroups);
     }
   },[curLocation]);
   return (
@@ -120,35 +78,16 @@ export default function MapContainer() {
         ref={mapRef}
         onIdle={(map) => {
           setCurLocation((prev) => ({ ...prev, isLoading: true }));
-          handleBoundsChanged(map);
+          handleBoundsChanged(map,curLocation,setCurLocation);
         }}
         onCreate={(map) => {
           if (curLocation.isLoading === true) {
-            handleBoundsChanged(map);
+            handleBoundsChanged(map,curLocation,setCurLocation);
           }
         }}
-        // onDragEnd={(map) => {
-        //   setCurLocation(() => ({
-        //     centerLat: map.getCenter().getLat(),
-        //     centerLon: map.getCenter().getLng(),
-        //     southWestLat: map.getBounds().getSouthWest().getLat(),
-        //     northEastLat: map.getBounds().getSouthWest().getLat(),
-        //     southWestLon: map.getBounds().getSouthWest().getLng(),
-        //     northEastLon: map.getBounds().getNorthEast().getLng(),
-        //   }));
-        // }}
-        // onZoomChanged={(map) => {
-        //   setCurLocation(() => ({
-        //     centerLat: map.getCenter().getLat(),
-        //     centerLon: map.getCenter().getLng(),
-        //     southWestLat: map.getBounds().getSouthWest().getLat(),
-        //     northEastLat: map.getBounds().getSouthWest().getLat(),
-        //     southWestLon: map.getBounds().getSouthWest().getLng(),
-        //     northEastLon: map.getBounds().getNorthEast().getLng(),
-        //   }));
-        // }}
+
       >
-        {groups?.map((marker: location) => (
+        {groups?.map((marker: apiLocation) => (
           <MapMarker // 마커를 생성합니다
             key={marker.groupId}
             image={{
@@ -166,8 +105,8 @@ export default function MapContainer() {
             }}
             position={{
               // 마커가 표시될 위치입니다
-              lat: marker.lat,
-              lng: marker.lng,
+              lat: marker.latitude,
+              lng: marker.longitude,
             }}
             onClick={() => {
               setCard('info');

@@ -16,7 +16,11 @@ export interface participantsHistory {
   beginAt : string,
   endAt : string
 }
-
+export interface apiLocation {
+  latitude:number;
+  longitude:number;
+  groupId?: number;
+}
 export interface postCurLocation {
   southWestLat: number;
   southWestLon: number;

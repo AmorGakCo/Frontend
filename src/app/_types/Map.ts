@@ -4,14 +4,16 @@ export interface addressInfo {
   address: string;
   content: string;
 }
-export interface location {
-  lat:number;
-  lng:number;
+
+
+export interface mapLocation {
+  lat: number;
+  lng: number;
   groupId?: number;
 }
 
 export interface geolocation{
-  center:location;
+  center:mapLocation;
   errMsg: string | null;
   isLoading: boolean;
   radius: number;
