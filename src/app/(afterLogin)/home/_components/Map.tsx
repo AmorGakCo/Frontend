@@ -23,16 +23,9 @@ export default function MapContainer() {
     centerLon: 0,
     isLoading: true,
   });
+  console.log(groups);
   const [card, setCard] = useState<string>('none');
-  const [groupData, setGroupData] = useState<groupData>({
-    hostNickname: '아모르겠고',
-    hostImgUrl: 'https://fakeimg',
-    beginAt: '2024-07-30T20:38:09.621499',
-    endAt: '2024-07-30T23:38:09.621502',
-    groupCapacity: 3,
-    currentParticipants: 3,
-    address: '서울특별시 종로구 신문로1가 23',
-  });
+  const [selectedGroupId, setSelectedGroupId] = useState(-1);
   const mapRef = useRef<kakao.maps.Map>(null);
   useEffect(() => {
     if (navigator.geolocation) {
@@ -46,7 +39,7 @@ export default function MapContainer() {
           }));
         },
         (err) => {
-          alert(err.message);
+          alert('위치 정보를 가져올 수 없습니다.');
         },
       );
     }
@@ -55,7 +48,6 @@ export default function MapContainer() {
   // 이후에 API 연동 가능할 시 주변 그룹 불러오기
   // useGetGroups(curLocation);
   // 지도의 경계 좌표와 중심 좌표를 가져오는 함수
-  
   
   useEffect(() => {
     const {isLoading,...apiData} = curLocation;
@@ -109,12 +101,12 @@ export default function MapContainer() {
               lng: marker.longitude,
             }}
             onClick={() => {
-              setCard('info');
+              setSelectedGroupId(marker.groupId!);
             }}
           />
         ))}
       </Map>
-      {card === 'info' && <GroupCard groupData={groupData} setCard={setCard} />}
+      {selectedGroupId !== -1 && <GroupCard groupId={selectedGroupId} />}
     </>
   );
 }
