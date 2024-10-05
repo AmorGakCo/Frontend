@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -23,45 +24,49 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
+import { formSchema } from '../_lib/GroupFormSchema';
+import { DateTimePicker } from './time-picker/DateTimePicker';
+import { groupCapacitys } from '../_lib/Constants';
+import { useRouter } from 'next/navigation';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogOverlay,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import MapModal from './modal/MapModal';
+import Image from 'next/image';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
-const formSchema = z.object({
-  groupName: z
-    .string()
-    .min(2, {
-      message: 'groupName must be at least 2 characters.',
-    })
-    .max(10),
-  groupCapacity: z
-    .number()
-    .min(1, { message: 'groupCapacity must be at least 1 characters' })
-    .max(12),
-  address: z.string(),
-  description: z
-    .string()
-    .min(5, { message: '최소 5글자 이상은 적어주세요.' })
-    .max(100),
-});
 
 export function GroupForm() {
-  // 1. Define your form.
-  const MAX_CAPACITY = 10;
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    mode: 'onChange',
     defaultValues: {
-      groupName: '',
-      groupCapacity: 1,
+      name: '',
+      isAgree: false,
     },
   });
-  const groupCapacitys: number[] = [];
-  for (let i = 1; i <= MAX_CAPACITY; i++) {
-    groupCapacitys.push(i);
-  }
+  const router = useRouter();
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="gap-6 flex flex-col"
+      >
         <FormField
           control={form.control}
-          name="groupName"
+          name="name"
           render={({ field }) => (
             <FormItem>
               <FormLabel>그룹명</FormLabel>
@@ -92,33 +97,73 @@ export function GroupForm() {
                   ))}
                 </SelectContent>
               </Select>
+              <FormMessage />
             </FormItem>
-            
           )}
         />
         <FormField
           control={form.control}
-          name="address"
-          render={({ field }) => (
+          name="addressInfo"
+          render={({ field}) => (
             <FormItem>
               <FormLabel>위치</FormLabel>
+              <FormDescription>
+                {field.value && (
+                  <div>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Button className="flex gap-2 bg-white border-[#a7d1ff] border-[0.5px] px-2 py-1 hover:bg-slate-100 ">
+                            <Image
+                              width={24}
+                              height={24}
+                              style={{
+                                filter:
+                                  'opacity(.5) drop-shadow(0 0 0 #2990FF)',
+                              }}
+                              src="/distance.png"
+                              alt="location"
+                            />
+                            <div className="text-[#2990FF]">
+                              {field.value.content}
+                            </div>
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent className="p-4 flex flex-col gap-2">
+                          <p>{field.value.address}</p>
+                          <p>{field.value.content}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                )}
+              </FormDescription>
               <FormControl>
-                <div className="flex gap-4">
-                  <Button className="bg-white border-[#2990FF] border-[0.5px] hover:bg-slate-100 text-[#2990FF]">
-                    위치 설정
-                  </Button>
-                  <Button>위치 추천</Button>
-                </div>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      onClick={() => {}}
+                      className="bg-white border-[#2990FF] border-[0.5px] hover:bg-slate-100 text-[#2990FF]"
+                    >
+                      장소 검색
+                    </Button>
+                  </DialogTrigger>
+                  <DialogOverlay className="bg-white" />
+                  <MapModal setAddressInfo={field.onChange} />
+                </Dialog>
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
+        {/* Address Field */}
+
         <FormField
           control={form.control}
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>설명</FormLabel>
+              <FormLabel>모임 설명</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="모임을 설명해주세요"
@@ -126,18 +171,74 @@ export function GroupForm() {
                   {...field}
                 />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
-        
-        <Button type="submit">Submit</Button>
+        <FormField
+          control={form.control}
+          name="beginAt"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel className="text-left">시작 시간</FormLabel>
+              <DateTimePicker value={field.value} onChange={field.onChange} />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="endAt"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel className="text-left">종료 시간</FormLabel>
+              <DateTimePicker value={field.value} onChange={field.onChange} />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="isAgree"
+          render={({ field }) => (
+            <FormItem className="flex flex-col space-y-0.5">
+              <div className="flex gap-3">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <FormLabel>I accept the terms</FormLabel>
+              </div>
+              <FormDescription className="space-y-0 underline decoration-solid">
+                Read our T&Cs
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit" className="mb-[66px]">
+          Submit
+        </Button>
       </form>
     </Form>
   );
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const { 
+      addressInfo: { address, latitude, longitude,...restAddressInfo }, 
+      isAgree, 
+      groupCapacity,
+      ...restValues 
+    } = values;
+    
+    const api_values = {
+      ...restValues,
+      address,
+      latitude,
+      longitude,
+      groupCapacity: Number(groupCapacity),
+    };
+    
+    console.log(api_values);
   }
 }

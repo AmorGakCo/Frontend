@@ -18,6 +18,10 @@ const config = {
       },
     },
     extend: {
+      fontSize: {
+        "2xs": '8px',
+      },
+
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
       },
@@ -78,9 +82,14 @@ const config = {
       height: {
         'headerHeight': '48px',
         'navbarHeight': '55px',
+        'modalHeight': 'calc(100% - 64px)',
+      },
+      margin: {
+        'navbarHeight': '55px',
       },
       textColor: {
         'title': '#2990FF',
+        'secondary': '#757575',
       },
       minHeight: {
         'default': 'calc(100dvh - 108px)',    
