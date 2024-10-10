@@ -28,6 +28,7 @@ export default function Login() {
     onSuccess: data => {
       console.log('Login Successful', data)
       console.log(data.data.oauth2MemberResponse)
+      localStorage.setItem('token',data.data.accessToken);
       setAccessToken(data.data.accessToken);
       router.push('/home')
     },
