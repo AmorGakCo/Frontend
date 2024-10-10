@@ -2,8 +2,8 @@ export interface groupPost {
   name: string;
   description: string;
   groupCapacity: number;
-  beginAt: Date;
-  endAt: Date;    
+  beginAt: string;
+  endAt: string;    
   latitude: number;
   longitude: number;
   address: string;

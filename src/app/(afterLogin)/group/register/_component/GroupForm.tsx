@@ -45,6 +45,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { fetchGroupRegister } from '../_lib/fetchGroupRegister';
 
 
 export function GroupForm() {
@@ -228,6 +229,8 @@ export function GroupForm() {
       addressInfo: { address, latitude, longitude,...restAddressInfo }, 
       isAgree, 
       groupCapacity,
+      beginAt,
+      endAt,
       ...restValues 
     } = values;
     
@@ -237,8 +240,21 @@ export function GroupForm() {
       latitude,
       longitude,
       groupCapacity: Number(groupCapacity),
+      beginAt: beginAt.toISOString(),
+      endAt: endAt.toISOString(),
     };
-    
-    console.log(api_values);
+    try {
+      const id = await fetchGroupRegister(api_values);
+      
+      // id를 반환받은 후에 해당 id로 페이지 이동
+      if (id) {
+        router.push(`/group/detail/${id}`);
+      }
+    } catch (error) {
+      console.error('Error occurred while registering group:', error);
+      // 에러 처리 (필요한 경우 사용자에게 알림)
+    }
+
+
   }
 }
