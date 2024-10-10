@@ -1,10 +1,38 @@
 'use client';
+import { GroupDetailData } from '@/app/_types/Api';
+import { useQuery } from '@tanstack/react-query';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
+import { usePathname } from 'next/navigation';
+import { fetchGroupData } from '../_lib/fetchGroupData';
+import { useEffect, useState } from 'react';
 
 export default function Location() {
-  const center = { lng: 126.9748397, lat: 37.5703901 };
-  const marker = { lng: 126.9748397, lat: 37.5703901 };
-  const address = '서울특별시 종로구 신문로1가 23';
+  const pathname = usePathname();
+  const groupId = pathname.split('/')[3];
+  const { data, error, isSuccess} = useQuery<
+  GroupDetailData,         // 성공 시 반환될 데이터 타입
+  Error,                   // 에러 타입 (여기서는 Error로 지정)
+  GroupDetailData,         // 캐시된 데이터를 사용할 때의 타입 (보통 첫 번째와 동일하게 사용)
+  [string, number]         // queryKey의 타입 (string과 number로 이루어진 튜플)
+>({
+    queryKey: ["groupDetail", Number(groupId)],
+    queryFn: fetchGroupData,
+    staleTime: 60 * 1000, // fresh -> stale, 5분이라는 기준
+    gcTime: 300 * 1000,
+  });
+  const [center, setCenter] = useState({lng:0,lat:0});
+  const [marker, setMarker] = useState({lng:0,lat:0});
+  console.log(data);
+  const [address, setAddress] = useState('');
+  useEffect(() => {
+    console.log(isSuccess);
+    if(isSuccess) {
+      setCenter({lat:data?.latitude,lng:data?.longitude});
+      setMarker({lat:data?.latitude,lng:data?.longitude});
+      setAddress(data?.address)
+    }
+  },[isSuccess,data]);
+  console.log(center);
   return (
     <div className="mt-8 w-full h-[200px] bg-gray-200">
       <Map // 지도를 표시할 Container
@@ -59,7 +87,7 @@ export default function Location() {
             lng: marker.lng,
           }}
         >
-          <div className="w-auto h-auto p-1">{address}</div>
+          <div className="min-w-32 h-auto p-1 z-50 bg-white absolute top-16">{address}</div>
         </MapMarker>
       </Map>
     </div>
