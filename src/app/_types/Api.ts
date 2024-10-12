@@ -45,6 +45,15 @@ export interface participantsHistory {
   beginAt : string,
   endAt : string
 }
+
+export interface GroupHistoryData {
+  page: number;
+  elementSize: number;
+  hasNext: boolean;
+  activatedGroup: participantsHistory[];      // 활성화된 그룹 배열
+  inactivatedGroup: participantsHistory[];     // 비활성화된 그룹 배열
+}
+
 export interface apiLocation {
   latitude:number;
   longitude:number;

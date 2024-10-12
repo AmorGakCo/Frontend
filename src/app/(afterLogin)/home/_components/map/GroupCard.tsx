@@ -1,3 +1,4 @@
+'use client'
 import {
   Card,
   CardContent,
@@ -10,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { fetchGroupData } from '../../_lib/fetchGroupData';
 import { useQuery } from '@tanstack/react-query';
 import processPeriod from '../../_lib/processPeriod';
+import { useJoinGroupMutation } from '../../_lib/useJoinGroupMutation';
 interface InfoCardProps {
   groupId: number;
 }
@@ -22,6 +24,7 @@ export default function GroupCard({ groupId }: InfoCardProps) {
     queryKey: ['group', groupId],
     queryFn: () => fetchGroupData(groupId),
   });
+  const { mutate: joinGroup } = useJoinGroupMutation(groupId);
   return (
     <Card className="z-30 w-[328px] absolute bottom-6 left-1/2 right-1/2 -translate-x-1/2">
       {isPending && <div className='w-full h-[282.6px] flex justify-center items-center'></div>}
@@ -60,7 +63,7 @@ export default function GroupCard({ groupId }: InfoCardProps) {
             </p>
           </CardContent>
           <CardFooter className="flex justify-center">
-            <Button>참여 요청</Button>
+            <Button onClick = {() => {joinGroup()}}>참여 요청</Button>
           </CardFooter>
         </>
       )}
