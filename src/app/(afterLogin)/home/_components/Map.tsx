@@ -31,8 +31,8 @@ export default function MapContainer() {
       setSelectedGroupId(-1);
     }
   };
-  document.addEventListener('keydown', handleEscapeKey);
   useEffect(() => {
+    document.addEventListener('keydown', handleEscapeKey);
     if (navigator.geolocation) {
       // GeoLocation을 이용해서 접속 위치를 얻어옵니다
       navigator.geolocation.getCurrentPosition(
@@ -48,6 +48,7 @@ export default function MapContainer() {
         },
       );
     }
+    return () => {document.removeEventListener('keydown', handleEscapeKey)}
   }, []);
 
   // 이후에 API 연동 가능할 시 주변 그룹 불러오기
