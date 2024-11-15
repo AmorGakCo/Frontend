@@ -18,6 +18,9 @@ const config = {
       },
     },
     extend: {
+      boxShadow: {
+        'navbar': '0px -2px 8px rgba(0, 0, 0, 0.25)',
+      },
       fontSize: {
         "2xs": '8px',
       },
