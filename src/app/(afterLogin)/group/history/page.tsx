@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import GroupCard from './_components/GroupCard';
 import { participantsHistory } from '@/app/_types/Api';
+
 export default function Page() {
 
   const {
@@ -27,6 +28,7 @@ export default function Page() {
     getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
   });
   return (
+    <>
     <main className="flex flex-col w-full items-center">
       <div className="w-[312px]">
           <div className="w-full mt-4 flex gap-4">
@@ -81,5 +83,6 @@ export default function Page() {
           </div>
       </div>
     </main>
+    </>
   );
 }

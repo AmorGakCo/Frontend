@@ -8,15 +8,21 @@ export interface groupPost {
   longitude: number;
   address: string;
 }
-export interface groupModalData {
-  hostNickname: string;
-  hostImgUrl: string;
-  beginAt: string; // ISO 형식의 날짜 문자열
-  endAt: string;   // ISO 형식의 날짜 문자열
-  groupCapacity: number;
-  currentParticipants: number;
-  address: string;
-}
+export interface groupModalApiData {
+  path: string;
+  status: string;
+  data: {
+  address: string; // 모임 장소 주소
+  beginAt: string; // 모임 시작 시간 (ISO 8601 형식)
+  currentParticipants: number; // 현재 참가자 수
+  endAt: string; // 모임 종료 시간 (ISO 8601 형식)
+  groupCapacity: number; // 모임 최대 인원 수
+  hostImgUrl: string; // 호스트의 프로필 이미지 URL
+  hostNickname: string; // 호스트 닉네임
+  isParticipated: boolean; // 사용자가 현재 모임에 참여 중인지 여부
+  isParticipationRequested: boolean; // 사용자가 참여 요청을 보냈는지 여부
+  }
+};
 interface GroupMember {
   memberId: number;
   imgUrl: string;
