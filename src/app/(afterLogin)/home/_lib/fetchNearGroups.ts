@@ -5,9 +5,14 @@ export async function fetchNearGroups(apiData:postCurLocation, setGroups:React.D
     const queryParams = new URLSearchParams(
       Object.entries(apiData).map(([key, value]) => [key, value.toString()])
     ).toString();
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_LOCATION}/groups/locations?${queryParams}`, {
+    
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_LOCATION}/group-locations?${queryParams}`, {
       method: "GET",
       cache: "no-cache",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      },
     });
 
     if (!response.ok) {

@@ -1,16 +1,21 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Image from 'next/image';
+import { fetchGroupHistory } from '../_lib/fetchGroupHistory';
+import { useEffect } from 'react';
+import Link from 'next/link';
 
-const GroupCard = ({
+ const GroupCard = ({
   name,
   address,
   beginAt,
   endAt,
+  groupId,
 }: {
   name: string;
   address: string;
   beginAt: string;
   endAt: string;
+  groupId: number;
 }) => {
   const beginAtDate = `${new Date(beginAt).getHours()}:${
     new Date(beginAt).getMinutes()
@@ -18,8 +23,9 @@ const GroupCard = ({
   const endAtDate = `${new Date(endAt).getHours()}:${
     new Date(endAt).getMinutes()
   }`;
+  
   return (
-    <div className="flex gap-2">
+    <Link href = {`/group/detail/${groupId}`}  className="flex gap-2">
       <Avatar className="w-[54px] h-[54px]">
         <AvatarImage src="/coin.svg" />
         <AvatarFallback>CN</AvatarFallback>
@@ -39,7 +45,7 @@ const GroupCard = ({
           <div className="text-2xs text-secondary lg:text-xs">{address}</div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 export default GroupCard;

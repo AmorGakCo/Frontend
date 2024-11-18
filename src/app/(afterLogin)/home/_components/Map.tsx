@@ -1,6 +1,5 @@
 'use client';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
-import { groupData } from '@/app/_types/Map';
 import { postCurLocation,apiLocation } from '@/app/_types/Api';
 import { useEffect, useRef, useState } from 'react';
 import GroupCard from './map/GroupCard';
@@ -27,7 +26,13 @@ export default function MapContainer() {
   const [card, setCard] = useState<string>('none');
   const [selectedGroupId, setSelectedGroupId] = useState(-1);
   const mapRef = useRef<kakao.maps.Map>(null);
+  const handleEscapeKey = (e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      setSelectedGroupId(-1);
+    }
+  };
   useEffect(() => {
+    document.addEventListener('keydown', handleEscapeKey);
     if (navigator.geolocation) {
       // GeoLocation을 이용해서 접속 위치를 얻어옵니다
       navigator.geolocation.getCurrentPosition(
@@ -43,6 +48,7 @@ export default function MapContainer() {
         },
       );
     }
+    return () => {document.removeEventListener('keydown', handleEscapeKey)}
   }, []);
 
   // 이후에 API 연동 가능할 시 주변 그룹 불러오기
@@ -77,7 +83,9 @@ export default function MapContainer() {
             handleBoundsChanged(map,curLocation,setCurLocation);
           }
         }}
-
+        onClick={() => {
+          setSelectedGroupId(-1);
+        }}
       >
         {groups?.map((marker: apiLocation) => (
           <MapMarker // 마커를 생성합니다
@@ -106,7 +114,7 @@ export default function MapContainer() {
           />
         ))}
       </Map>
-      {selectedGroupId !== -1 && <GroupCard groupId={selectedGroupId} />}
-    </>
+      {selectedGroupId !== -1 && <GroupCard setSelectedGroupId={setSelectedGroupId} groupId={selectedGroupId} />}
+      </>
   );
 }

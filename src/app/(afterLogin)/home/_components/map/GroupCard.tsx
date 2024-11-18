@@ -1,3 +1,4 @@
+'use client'
 import {
   Card,
   CardContent,
@@ -10,18 +11,24 @@ import { Button } from '@/components/ui/button';
 import { fetchGroupData } from '../../_lib/fetchGroupData';
 import { useQuery } from '@tanstack/react-query';
 import processPeriod from '../../_lib/processPeriod';
+import { useJoinGroupMutation } from '../../_lib/useJoinGroupMutation';
+import { groupModalApiData } from '@/app/_types/Api';
+import { forwardRef, SetStateAction, useRef } from 'react';
 interface InfoCardProps {
   groupId: number;
+  setSelectedGroupId: React.Dispatch<SetStateAction<number>>
 }
-export default function GroupCard({ groupId }: InfoCardProps) {
+export default function GroupCard({ groupId, setSelectedGroupId }: InfoCardProps) {
   const {
     isPending,
     isError,
     data: response,
-  } = useQuery({
+  } = useQuery<groupModalApiData | undefined>({
     queryKey: ['group', groupId],
     queryFn: () => fetchGroupData(groupId),
   });
+  const { mutate: joinGroup } = useJoinGroupMutation(groupId);
+  
   return (
     <Card className="z-30 w-[328px] absolute bottom-6 left-1/2 right-1/2 -translate-x-1/2">
       {isPending && <div className='w-full h-[282.6px] flex justify-center items-center'></div>}
@@ -30,7 +37,7 @@ export default function GroupCard({ groupId }: InfoCardProps) {
         <>
           <CardHeader className="relative flex flex-col items-center p-4">
             <Avatar className="w-[75px] h-[75px] mt-0.5">
-              <AvatarImage src={`${response.data.hostImgUrl}`} />
+              <AvatarImage src={`${response?.data.hostImgUrl}`} />
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
             <CardTitle className="text-center text-title outline-blue mt-0 underline">
@@ -59,8 +66,10 @@ export default function GroupCard({ groupId }: InfoCardProps) {
               </Avatar>
             </p>
           </CardContent>
-          <CardFooter className="flex justify-center">
-            <Button>참여 요청</Button>
+          <CardFooter className="flex justify-center text-blue-500">
+            {(response?.data.isParticipationRequested) && '참여 요청 대기 중...'}
+            {(response?.data.isParticipated) && '참여 중인 그룹'}
+            {(!response?.data.isParticipated && !response.data.isParticipationRequested) && (<Button onClick={() => {joinGroup()}}>참여 요청</Button>)}
           </CardFooter>
         </>
       )}
