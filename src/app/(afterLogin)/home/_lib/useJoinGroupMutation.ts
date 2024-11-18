@@ -1,5 +1,6 @@
 'use client'
-import { groupModalData } from '@/app/_types/Api';
+import { groupModalApiData } from '@/app/_types/Api';
+// import { groupModalData } from '@/app/_types/Api';
 import { useMutation, useQueryClient } from  '@tanstack/react-query';
 export async function fetchjoinGroup(groupId:number) {
 const response = await fetch(
@@ -14,51 +15,50 @@ const response = await fetch(
     cache: "no-cache",
   },
 );
-console.log(response);
-return response.json()
+const result = await response.json();
+return result;
 }
-export function useJoinGroupMutation(groupId:number) {
+export function useJoinGroupMutation(groupId: number) {
+  
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async () => {
-      // 그룹 참가 API 요청
-      return await fetchjoinGroup(groupId); // group 참가 API 호출
+    mutationFn:  () => {
+      return fetchjoinGroup(groupId);
     },
-    // onSuccess: (newGroupData) => {
-    //   // 그룹 참가 성공 시 실행
-    //   queryClient.setQueryData(['group', groupId], (oldData:groupModalData | undefined) => {
-    //     if (!oldData) {
-    //       return {
-    //         hostNickname: '',
-    //         hostImgUrl: '',
-    //         beginAt: '', // ISO 형식의 날짜 문자열
-    //         endAt: '',   // ISO 형식의 날짜 문자열
-    //         groupCapacity: 0,
-    //         currentParticipants: 0,
-    //         address: '',
-    //       }
-    //     }
-    //     return {
-    //       ...oldData, // 기존 데이터 유지
-    //       currentParticipants: oldData.currentParticipants + 1, // 참가자 수 갱신
-    //     };
-    //   });
-    //   // group,id 쿼리 무효화
-    //   queryClient.invalidateQueries({queryKey:['group', groupId]});
-
-    //   // groupHistory 쿼리 무효화
-    //   queryClient.invalidateQueries({queryKey:['groupHistory']});
-
-    //   queryClient.invalidateQueries({queryKey:['groupDetail',groupId]});
-
-
-    
-
-    //   // queryClient.setQueryData('groupHistory', (oldData) => {
-    //   //   // 예: groupHistory에 새로운 그룹 추가
-    //   //   return [...oldData, newGroupData];
-    //   // });
-    // },
+    onSuccess: (data) => {
+      // 그룹 참가 성공 시 실행
+      // queryClient.setQueryData(['group', groupId], (oldData: groupModalApiData | undefined) => {
+      //   if (!oldData) {
+      //     return {
+      //       path: '',
+      //       status: '',
+      //       data: {
+      //         address: '',
+      //         beginAt: '',
+      //         endAt: '',
+      //         currentParticipants: 0,
+      //         groupCapacity: 0,
+      //         hostImgUrl: '',
+      //         hostNickname: '',
+      //         isParticipated: false,
+      //         isParticipationRequested: true, // isParticipationRequested 속성만 true로 설정
+      //       }
+      //     };
+      //   }
+      //   return {
+      //     ...oldData,
+      //     data: {
+      //       ...oldData.data,
+      //       isParticipationRequested: true, // isParticipationRequested 속성만 true로 설정
+      //     }
+      //   };
+      // });
+      console.log(data);
+      // group, groupHistory, groupDetail 쿼리 무효화
+      queryClient.invalidateQueries({ queryKey: ['group', groupId] });
+      queryClient.invalidateQueries({ queryKey: ['groupDetail', groupId] });
+      alert('참여 요청을 보냈습니다.');
+    },
   });
 }
