@@ -4,6 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import useAuthStore from '@/hooks/useAuthStore';
+import Cookies from "js-cookie";
 
 
 export default function Login() {
@@ -26,10 +27,8 @@ export default function Login() {
       return response.json()
     },
     onSuccess: data => {
-      console.log('Login Successful', data)
-      console.log(data.data.oauth2MemberResponse)
-      localStorage.setItem('token',data.data.accessToken);
       setAccessToken(data.data.accessToken);
+      Cookies.set('accessToken',data.data.accessToken);
       router.push('/home')
     },
     onError: error => {
