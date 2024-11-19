@@ -1,19 +1,13 @@
 import { groupModalApiData } from "@/app/_types/Api";
+import { fetchWithAuth } from "../../_lib/FetchWithAuth";
 
 export async function fetchGroupData(groupId: number): Promise<groupModalApiData | undefined> {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_LOCATION}/groups/${groupId}/basic`, {
+    const response = await fetchWithAuth(`/groups/${groupId}/basic`, {
       method: "GET",
       cache: "no-cache",
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-      },
     })
-    if (!response.ok) {
-      throw new Error(`Error: ${response.statusText}`);
-    }
-    return await response.json() as groupModalApiData;
+    return await response.data as groupModalApiData;
   } catch (error) {
     console.error("Failed to fetch data:", error);
   }

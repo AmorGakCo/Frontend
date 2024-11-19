@@ -1,20 +1,17 @@
+import { fetchWithAuth } from '@/app/(afterLogin)/_lib/FetchWithAuth';
 import { GroupHistoryData, participantsHistory } from '@/app/_types/Api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 async function fetchDeleteGroup(groupId: number) {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_LOCATION!}/groups/${groupId}`,
+  const response = await fetchWithAuth(
+    `/groups/${groupId}`,
     {
       method: 'DELETE',
       credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
       cache: 'no-cache',
     },
   );
   console.log(response);
-  return response.json();
+  return response;
 }
 export function useDeleteGroupMutation(groupId: number) {
   const queryClient = useQueryClient();
