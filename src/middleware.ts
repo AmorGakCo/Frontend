@@ -6,12 +6,15 @@ import Cookies from 'js-cookie';
 export default async function middleware(request: NextRequest) {
   // 프론트 서버 요청을 완료하기 전 쿠키에서 accessToken을 가져와서 만료되었는지 확인
   let token = request.cookies.get('accessToken');
+  const pathname = request.nextUrl.pathname;
   if (!token) {
+    if (pathname === '/home') {
+      return NextResponse.redirect(new URL('/', request.url))
+    }
     return NextResponse.redirect(new URL('/login', request.url));
   }
   if (token && isTokenExpired(token.value)) {
     const result = await getAccessTokenWithRefreshToken();
-    console.log(result);
     if (result.data.status !== 400 && result.path === '/error') {
       const response = NextResponse.next();
       response.cookies.set('accessToken', result.accessToken);
@@ -29,7 +32,7 @@ export const config = {
     '/group/register',
     '/group/detail/:groupId',
     '/group/history',
-    '/:username',
+    '/user/:username',
     '/message',
     '/message/:name',
     '/ranking',
