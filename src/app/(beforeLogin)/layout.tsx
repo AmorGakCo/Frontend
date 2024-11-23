@@ -1,7 +1,8 @@
-import Cookies from "js-cookie";
 import { cookies } from "next/headers";
 import { redirect } from 'next/navigation';
-
+export const metadata = {
+  cache: 'no-store', // 페이지를 캐싱하지 않도록 설정
+};
 export default async function RootLayout({
   children,
 
