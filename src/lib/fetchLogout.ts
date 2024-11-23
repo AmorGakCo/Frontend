@@ -5,6 +5,7 @@ export const fetchLogout = async () => {
   await fetch(`${process.env.NEXT_PUBLIC_API_LOCATION}/tokens`, {
     method: 'DELETE',
     cache: "no-cache",
+    credentials:'include',
     headers: {
       Authorization: `Bearer ${Cookies.get('accessToken')}`,
     }
