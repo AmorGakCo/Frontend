@@ -1,6 +1,7 @@
-import NavBar from "@/components/ui/Navbar";
+import Cookies from "js-cookie";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { redirect } from 'next/navigation';
+
 export default async function RootLayout({
   children,
 
@@ -8,13 +9,12 @@ export default async function RootLayout({
   children: React.ReactNode,
 }>) {
   const token = cookies().get('accessToken');
-  if(!token) {
-    redirect('/login');
+  if(token) {
+    redirect('/home');
   }
   return (
     <>
     {children}
-    <NavBar/>
     </>
   );
 }
