@@ -4,7 +4,7 @@ import { groupPost } from '@/app/_types/Api';
 export async function fetchGroupRegister(data: groupPost) {
   try {
     const response = await fetchWithAuth(
-      `${process.env.NEXT_PUBLIC_API_LOCATION!}/groups`,
+      `/groups`,
       {
         method: 'POST',
         credentials: 'include',
