@@ -41,8 +41,7 @@ export default function Header() {
           alt="뒤로가기"
         />
       )}
-      {isClient &&
-      pathname !== '/home' && pathname !== '/' && (
+      {isClient && pathname !== '/home' && pathname !== '/' && (
         <Image
           className="cursor-pointer"
           onClick={() => {
@@ -59,9 +58,8 @@ export default function Header() {
           {title}
         </div>
       )}
-      { isClient && accessToken ? (
-        <DropDown />
-      ) : (
+      {isClient && accessToken && <DropDown />}
+      {isClient && !accessToken && (
         <Link href="/login" className="mr-2">
           <Button>로그인</Button>
         </Link>
