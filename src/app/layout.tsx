@@ -7,7 +7,8 @@ import Script from 'next/script';
 import RQProvider from '../components/RQProvider';
 import { Inter as FontSans } from 'next/font/google';
 import { cn } from '@/lib/utils';
-import { usePathname } from 'next/navigation';
+
+
 const inter = Inter({ subsets: ['latin'] });
 
 const fontSans = FontSans({
@@ -21,7 +22,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
+  
   return (
     <html lang="en">
       <body
@@ -32,7 +33,7 @@ export default function RootLayout({
           <div className="flex flex-col mt-12 min-h-default relative mb-navbarHeight">
             {children}
           </div> 
-          <NavBar />
+         
           <Script
             src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_KEY}&libraries=services,clusterer&autoload=false`}
             strategy="beforeInteractive"
