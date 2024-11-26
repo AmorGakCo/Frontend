@@ -1,22 +1,18 @@
+import { fetchWithAuth } from '@/app/(afterLogin)/_lib/FetchWithAuth';
 import { groupPost } from '@/app/_types/Api';
-import { useRouter } from 'next/router';
 
 export async function fetchGroupRegister(data: groupPost) {
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_LOCATION!}/groups`,
+    const response = await fetchWithAuth(
+      `/groups`,
       {
         method: 'POST',
         credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
         body: JSON.stringify(data),
         cache: "no-cache",
       },
     );
-    const result = await response.json();
+    const result = await response;
     if (response.ok) {
       alert('그룹이 등록되었습니다.');
       

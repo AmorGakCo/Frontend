@@ -2,21 +2,17 @@
 import { groupModalApiData } from '@/app/_types/Api';
 // import { groupModalData } from '@/app/_types/Api';
 import { useMutation, useQueryClient } from  '@tanstack/react-query';
+import { fetchWithAuth } from '../../_lib/FetchWithAuth';
 export async function fetchjoinGroup(groupId:number) {
-const response = await fetch(
-  `${process.env.NEXT_PUBLIC_API_LOCATION!}/groups/${groupId}/participation`,
+const response = await fetchWithAuth(
+  `/groups/${groupId}/participation`,
   {
     method:'POST',
     credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
-    },
     cache: "no-cache",
   },
 );
-const result = await response.json();
-return result;
+return await response;
 }
 export function useJoinGroupMutation(groupId: number) {
   
@@ -26,7 +22,7 @@ export function useJoinGroupMutation(groupId: number) {
     mutationFn:  () => {
       return fetchjoinGroup(groupId);
     },
-    onSuccess: (data) => {
+    onMutate: (data) => {
       // 그룹 참가 성공 시 실행
       // queryClient.setQueryData(['group', groupId], (oldData: groupModalApiData | undefined) => {
       //   if (!oldData) {
