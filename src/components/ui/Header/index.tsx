@@ -6,7 +6,6 @@ import { pathToTitleMap } from '@/app/constants';
 import Cookies from 'js-cookie';
 import { Button } from '../button';
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
 import DropDown from './DropDown';
 
 export default function Header() {
@@ -14,11 +13,11 @@ export default function Header() {
   const pathname = usePathname();
   const accessToken = Cookies.get('accessToken');
   const [title, setTitle] = useState(pathToTitleMap[pathname]);
-  const [isClient, setIsClient] = useState(false);
+  // const [isClient, setIsClient] = useState(false);
 
-  useEffect(() => {
-    setIsClient(true); // 클라이언트에서만 동작하도록 설정
-  }, []);
+  // useEffect(() => {
+  //   setIsClient(true); // 클라이언트에서만 동작하도록 설정
+  // }, []);
 
   useEffect(() => {
     const newTitle = pathToTitleMap[pathname];
@@ -33,7 +32,10 @@ export default function Header() {
         <Image
           className="cursor-pointer"
           onClick={() => {
-            router.replace('/home');
+            if (accessToken && pathname !== '/') {
+              router.replace('/home');
+            }
+            router.replace('/');
           }}
           width={106}
           height={32}
@@ -41,7 +43,7 @@ export default function Header() {
           alt="뒤로가기"
         />
       )}
-      {isClient && pathname !== '/home' && pathname !== '/' && (
+      {pathname !== '/home' && pathname !== '/' && (
         <Image
           className="cursor-pointer"
           onClick={() => {
@@ -53,13 +55,13 @@ export default function Header() {
           alt="뒤로가기"
         />
       )}
-      {isClient && pathname !== '/home' && (
+      {pathname !== '/home' && (
         <div className="font-bold text-xl absolute top-1/2 left-1/2 -trnaslate-x-1/2 -translate-y-1/2">
           {title}
         </div>
       )}
-      {isClient && accessToken && <DropDown />}
-      {isClient && !accessToken && (
+      {accessToken && <DropDown />}
+      {!accessToken && (
         <Link href="/login" className="mr-2">
           <Button>로그인</Button>
         </Link>
