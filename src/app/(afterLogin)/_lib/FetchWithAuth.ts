@@ -17,7 +17,7 @@ export const fetchWithAuth = async <T = any>(endpoint: string, options: ApiFetch
     ...options.headers,
   };
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_LOCATION}/api/${endpoint}`, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_LOCATION}/api${endpoint}`, {
     ...options,
     credentials: 'include',
     headers,
