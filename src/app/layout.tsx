@@ -7,7 +7,12 @@ import Script from 'next/script';
 import RQProvider from '../components/RQProvider';
 import { Inter as FontSans } from 'next/font/google';
 import { cn } from '@/lib/utils';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { Suspense } from 'react';
+import dynamic from 'next/dynamic';
 
+const DynamicHeader = dynamic(() => import('../components/ui/Header'), { ssr: false });
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -22,14 +27,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  
   return (
     <html lang="en">
       <body
         className={cn('bg-background font-sans antialiased', fontSans.variable)}
       >
         <RQProvider>
-          <Header/>
+          <DynamicHeader/>
           <div className="flex flex-col mt-12 min-h-default relative mb-navbarHeight">
             {children}
           </div> 

@@ -2,7 +2,7 @@ import { fetchWithAuth } from "@/app/(afterLogin)/_lib/FetchWithAuth"
 import Cookies from "js-cookie";
 export const fetchLogout = async () => {
   try {
-  await fetch(`${process.env.NEXT_PUBLIC_API_LOCATION}/tokens`, {
+  await fetch(`${process.env.NEXT_PUBLIC_API_LOCATION}/api/tokens`, {
     method: 'DELETE',
     cache: "no-cache",
     credentials:'include',
