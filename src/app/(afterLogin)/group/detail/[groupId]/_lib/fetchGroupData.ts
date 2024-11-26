@@ -10,8 +10,8 @@ export async function fetchGroupData({queryKey}:{queryKey:[string,number]}) {
     // if (!response.ok) {
     //   throw new Error(`Error: ${response.statusText}`);
     // }
-   
-    return await response.data
+   console.log(response);
+    return await response
   } catch (error) {
     console.error("Failed to fetch data:", error);
   }
