@@ -1,12 +1,12 @@
-export interface groupPost {
-  name: string;
-  description: string;
-  groupCapacity: number;
-  beginAt: string;
-  endAt: string;    
+export interface groupPost{
+  address: string;
   latitude: number;
   longitude: number;
-  address: string;
+  groupCapacity: number;
+  beginAt: string;
+  endAt: string;
+  name?: string; // 선택적으로 변경
+  description?: string;
 }
 export interface groupModalApiData {
 

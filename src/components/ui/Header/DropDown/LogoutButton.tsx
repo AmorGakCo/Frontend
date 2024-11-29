@@ -1,17 +1,7 @@
 import {
   DropdownMenuItem,
 } from '../../dropdown-menu';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+
 import { logout } from '../lib/logout';
 
 export const LogoutButton = () => {
