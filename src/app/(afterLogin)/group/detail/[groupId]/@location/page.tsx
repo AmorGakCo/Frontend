@@ -22,17 +22,14 @@ export default function Location() {
   });
   const [center, setCenter] = useState({lng:0,lat:0});
   const [marker, setMarker] = useState({lng:0,lat:0});
-  console.log(data);
   const [address, setAddress] = useState('');
   useEffect(() => {
-    console.log(isSuccess);
     if(isSuccess) {
       setCenter({lat:data?.latitude,lng:data?.longitude});
       setMarker({lat:data?.latitude,lng:data?.longitude});
       setAddress(data?.address)
     }
   },[isSuccess,data]);
-  console.log(center);
   return (
     <div className="mt-8 w-full h-[200px] bg-gray-200">
       <Map // 지도를 표시할 Container

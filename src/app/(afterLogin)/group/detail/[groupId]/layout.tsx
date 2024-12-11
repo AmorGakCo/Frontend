@@ -6,8 +6,10 @@ import { ButtonGroup } from './_component/ButtonGroup';
 import GroupMembers from './_component/GroupMembers';
 import {dehydrate, HydrationBoundary, QueryClient} from "@tanstack/react-query";
 import { fetchGroupData } from './_lib/fetchGroupData';
+import { fetchGroupDataServer } from './_lib/fetchGroupDataServer';
 export async function generateMetadata({params}: {params: {groupId: string}}) {
-  const response = await fetchGroupData({queryKey: ['groupDetail',Number(params.groupId)]});
+  const response = await fetchGroupDataServer({queryKey: ['groupDetail',Number(params.groupId)]});
+  console.log('respose',response);
   return {
     title: `${response.name}`,
     description: `${response.description}`,
@@ -23,7 +25,7 @@ export default async function RootLayout({
   params: {groupId:string}
 }>) {
   const queryClient = new QueryClient();
-  await queryClient.prefetchQuery({queryKey: ['groupDetail',Number(params.groupId)], queryFn: fetchGroupData})
+  await queryClient.prefetchQuery({queryKey: ['groupDetail',Number(params.groupId)], queryFn: fetchGroupDataServer})
   const dehydratedState = dehydrate(queryClient)
   const groupId = Number(params.groupId)
   return (
