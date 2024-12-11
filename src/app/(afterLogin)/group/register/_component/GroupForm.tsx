@@ -244,6 +244,7 @@ export function GroupForm() {
       endAt: endAt.toISOString(),
     };
     try {
+      console
       const id = await fetchGroupRegister(api_values);
       
       // id를 반환받은 후에 해당 id로 페이지 이동
@@ -251,7 +252,7 @@ export function GroupForm() {
         router.push(`/group/detail/${id}`);
       }
     } catch (error) {
-      console.error('Error occurred while registering group:', error);
+      alert('그룹 생성에 실패하였습니다.')
       // 에러 처리 (필요한 경우 사용자에게 알림)
     }
 

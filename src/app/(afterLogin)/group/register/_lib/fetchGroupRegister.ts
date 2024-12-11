@@ -13,14 +13,14 @@ export async function fetchGroupRegister(data: groupPost) {
       },
     );
     const result = await response;
-    if (response.ok) {
+    if (result.status === 'success') {
       alert('그룹이 등록되었습니다.');
       
     } else {
       console.error('Error:', result.message);
     }
 
-    return result.data.id;
+    return result.data.groupId;
   } catch (error) {
     console.error('Error submitting the form:', error);
   }
