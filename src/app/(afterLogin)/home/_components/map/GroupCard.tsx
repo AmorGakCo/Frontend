@@ -11,9 +11,9 @@ import { Button } from '@/components/ui/button';
 import { fetchGroupData } from '../../_lib/fetchGroupData';
 import { useQuery } from '@tanstack/react-query';
 import processPeriod from '../../_lib/processPeriod';
-import { useJoinGroupMutation } from '../../_lib/useJoinGroupMutation';
+import { useJoinGroupMutation } from '../../hooks/useJoinGroupMutation';
 import { groupModalApiData } from '@/app/_types/Api';
-import { forwardRef, SetStateAction, useRef } from 'react';
+import { SetStateAction } from 'react';
 interface InfoCardProps {
   groupId: number;
   setSelectedGroupId: React.Dispatch<SetStateAction<number>>
