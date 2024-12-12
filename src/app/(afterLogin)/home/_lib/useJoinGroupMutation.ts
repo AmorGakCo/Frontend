@@ -19,42 +19,16 @@ export function useJoinGroupMutation(groupId: number) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn:  () => {
-      return fetchjoinGroup(groupId);
+    mutationFn:  async () => {
+      return await fetchjoinGroup(groupId);
     },
-    onMutate: (data) => {
-      // 그룹 참가 성공 시 실행
-      // queryClient.setQueryData(['group', groupId], (oldData: groupModalApiData | undefined) => {
-      //   if (!oldData) {
-      //     return {
-      //       path: '',
-      //       status: '',
-      //       data: {
-      //         address: '',
-      //         beginAt: '',
-      //         endAt: '',
-      //         currentParticipants: 0,
-      //         groupCapacity: 0,
-      //         hostImgUrl: '',
-      //         hostNickname: '',
-      //         isParticipated: false,
-      //         isParticipationRequested: true, // isParticipationRequested 속성만 true로 설정
-      //       }
-      //     };
-      //   }
-      //   return {
-      //     ...oldData,
-      //     data: {
-      //       ...oldData.data,
-      //       isParticipationRequested: true, // isParticipationRequested 속성만 true로 설정
-      //     }
-      //   };
-      // });
-      console.log(data);
-      // group, groupHistory, groupDetail 쿼리 무효화
+    onError: (err) => {
+      alert(`오류가 발생했습니다: ${err.message}`);
+    },
+    onSuccess: () => {
+      alert('참여요청을 보냈습니다');
       queryClient.invalidateQueries({ queryKey: ['group', groupId] });
       queryClient.invalidateQueries({ queryKey: ['groupDetail', groupId] });
-      alert('참여 요청을 보냈습니다.');
-    },
+    }
   });
 }
