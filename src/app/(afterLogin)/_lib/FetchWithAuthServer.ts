@@ -1,4 +1,3 @@
-import Cookies from "js-cookie";
 import { cookies } from "next/headers";
 interface ApiFetchOptions extends RequestInit {
   headers?: Record<string, string>;
@@ -11,7 +10,7 @@ interface ApiFetchOptions extends RequestInit {
  * @returns API 응답의 JSON 데이터
  */
 export const fetchWithAuthServer = async <T = any>(endpoint: string, options: ApiFetchOptions = {}): Promise<T> => {
-  const accessToken = cookies().toString().split('=')[1];
+  const accessToken = cookies().get('accessToken')?.value;
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
