@@ -9,9 +9,11 @@ export default async function middleware(request: NextRequest) {
   
   if (token && isTokenExpired(token.value)) {
     const result = await getAccessTokenWithRefreshToken();
-
     if (result.path === '/error') {
-      return NextResponse.redirect(new URL('/login',request.url));
+      const response = NextResponse.redirect(new URL('/login',request.url));
+      response.cookies.delete('accessToken');
+      response.cookies.delete('refresh-token');
+      return response;
     }
     const response = NextResponse.next();
     response.cookies.set('accessToken',result.data.accessToken);
