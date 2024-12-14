@@ -1,7 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Image from 'next/image';
-import { fetchGroupHistory } from '../_lib/fetchGroupHistory';
-import { useEffect } from 'react';
 import Link from 'next/link';
 
  const GroupCard = ({
@@ -17,11 +15,11 @@ import Link from 'next/link';
   endAt: string;
   groupId: number;
 }) => {
-  const beginAtDate = `${new Date(beginAt).getHours()}:${
-    new Date(beginAt).getMinutes()
+  const beginAtDate = `${new Date(beginAt).getHours().toString().padStart(2,'0')}:${
+    new Date(beginAt).getMinutes().toString().padStart(2,'0')
   }`;
-  const endAtDate = `${new Date(endAt).getHours()}:${
-    new Date(endAt).getMinutes()
+  const endAtDate = `${new Date(endAt).getHours().toString().padStart(2,'0')}:${
+    new Date(endAt).getMinutes().toString().padStart(2,'0')
   }`;
   
   return (

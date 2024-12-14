@@ -41,7 +41,7 @@ export interface GroupDetailData {
 }
 
 
-export interface participantsHistory {
+export interface GroupHistoryData {
   groupId : number,
   name : string,
   address : string,
@@ -49,12 +49,11 @@ export interface participantsHistory {
   endAt : string
 }
 
-export interface GroupHistoryData {
+export interface ParticipantsHistory {
   page: number;
   elementSize: number;
   hasNext: boolean;
-  activatedGroup: participantsHistory[];      // 활성화된 그룹 배열
-  inactivatedGroup: participantsHistory[];     // 비활성화된 그룹 배열
+  histories: GroupHistoryData[];      // 활성화된 그룹 배열
 }
 
 export interface apiLocation {
