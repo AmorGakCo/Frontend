@@ -9,8 +9,8 @@ export default async function middleware(request: NextRequest) {
   
   if (token && isTokenExpired(token.value)) {
     const result = await getAccessTokenWithRefreshToken();
-    console.log(result);
-    if (result.status !== 'success') {
+
+    if (result.path === '/error') {
       return NextResponse.redirect(new URL('/login',request.url));
     }
     const response = NextResponse.next();
