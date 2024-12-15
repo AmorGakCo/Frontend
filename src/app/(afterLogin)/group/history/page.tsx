@@ -5,11 +5,13 @@ import Image from 'next/image';
 //   HydrationBoundary,
 //   QueryClient,
 // } from '@tanstack/react-query';
-import { fetchCurrentGroups } from './_lib/fetchGroupHistory';
-import { useEffect } from 'react';
+import { fetchCurrentGroups } from './_lib/fetchCurrentGroups';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import GroupCard from './_components/GroupCard';
 import { ParticipantsHistory, GroupHistoryData } from '@/app/_types/Api';
+import usePreviousGroupsQuery from './_hooks/usePreviousGroupsQuery';
+import { Spinner } from '@/components/ui/spinner';
 
 export default function Page() {
   const { data: currentGroups } = useQuery<
@@ -23,20 +25,32 @@ export default function Page() {
     staleTime: 60 * 1000, // fresh -> stale, 5분이라는 기준
     gcTime: 300 * 1000,
   });
-  // const {
-  //   data,
-  //   error,
-  //   fetchNextPage,
-  //   hasNextPage,
-  //   isFetching,
-  //   isFetchingNextPage,
-  //   status,
-  // } = useInfiniteQuery({
-  //   queryKey: ['groupHistory'],
-  //   queryFn: fetchGroupHistory,
-  //   initialPageParam: 0,
-  //   getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
-  // });
+  const {
+    previousGroups,
+    isLoading,
+    fetchNextPage,
+    isError,
+    isFetchingNextPage,
+    hasNextPage,
+  } = usePreviousGroupsQuery();
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const [more, setMore] = useState(false);
+  const lastElementRef: React.RefCallback<HTMLElement> = useCallback(
+    (node) => {
+      if (!more || isFetchingNextPage) return;
+      if (observerRef.current) observerRef.current.disconnect();
+
+      observerRef.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasNextPage) {
+          fetchNextPage();
+        }
+      });
+
+      if (node) observerRef.current.observe(node);
+    },
+    [more, isFetchingNextPage, fetchNextPage, hasNextPage],
+  );
+
   return (
     <>
       <main className="flex flex-col w-full items-center">
@@ -76,18 +90,36 @@ export default function Page() {
             </div>
           </div>
           <div className="flex flex-col gap-4 py-6 w-full">
-            {/* {data?.pages.map((groups) => {
-  return groups.InactivatedGroup.map((group:participantsHistory) => (
-    <GroupCard
-      key={group.groupId}
-      groupId={group.groupId}
-      name={group.name}
-      address={group.address}
-      beginAt={group.beginAt}
-      endAt={group.endAt}
-    />
-  ));
-})} */}
+            {previousGroups.map((group, index) => {
+              const isLastElement = index == previousGroups.length - 1;
+              return (
+                <GroupCard
+                  key={group.groupId}
+                  groupId={group.groupId}
+                  name={group.name}
+                  address={group.address}
+                  beginAt={group.beginAt}
+                  endAt={group.endAt}
+                  ref={isLastElement ? lastElementRef : null}
+                />
+              );
+            })}
+            {isFetchingNextPage && <Spinner />}
+            {!more && hasNextPage && (
+              <div className="flex w-full justify-center">
+                <Image
+                  src={'/arrow_down.svg'}
+                  width={32}
+                  height={32}
+                  alt="more group"
+                  className="cursor-pointer animate-float"
+                  onClick={() => {
+                    fetchNextPage();
+                    setMore(true);
+                  }}
+                />
+              </div>
+            )}
           </div>
         </div>
       </main>
