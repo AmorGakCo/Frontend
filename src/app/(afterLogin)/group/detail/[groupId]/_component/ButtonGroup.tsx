@@ -7,6 +7,7 @@ import { useLeaveGroupMutation } from '../hooks/useLeaveGroupMutation';
 import { useRouter } from 'next/navigation';
 import { useDeleteGroupMutation } from '../hooks/useDeleteGroup';
 import { fetchAuthentication } from '../_lib/fetchAuthentication';
+import TardinessDialog from './TardinessDialog';
 
 export function ButtonGroup({ groupId }: { groupId: number }) {
   const { data, error } = useQuery<
@@ -53,7 +54,7 @@ export function ButtonGroup({ groupId }: { groupId: number }) {
       >
         모임 위치 인증
       </Button>
-      <Button>지각 알림</Button>
+      <TardinessDialog />
       <Button>장소 변경 요청</Button>
       {data?.isGroupHost ? (
         <Button
