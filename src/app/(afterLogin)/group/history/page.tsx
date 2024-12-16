@@ -78,6 +78,7 @@ export default function Page() {
               />
             ))}
           </div>
+          {currentGroups?.histories.length ===0 && <div className='w-full flex justify-center'>현재 참여중인 그룹이 없습니다.</div>}
           <div className="flex gap-4 w-full">
             <Image
               width={14}
@@ -104,6 +105,7 @@ export default function Page() {
                 />
               );
             })}
+            {previousGroups.length === 0 && <div className='flex w-full justify-center text-blue-500'>이전에 참여한 그룹이 없습니다</div>}
             {isFetchingNextPage && <Spinner />}
             {!more && hasNextPage && (
               <div className="flex w-full justify-center">
