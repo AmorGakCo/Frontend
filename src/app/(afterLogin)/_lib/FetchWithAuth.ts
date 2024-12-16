@@ -23,9 +23,9 @@ export const fetchWithAuth = async <T = any>(endpoint: string, options: ApiFetch
     headers,
   });
 
-  if (!response.ok) {
-    throw new Error(`API 요청 실패: ${response.statusText}`);
-  }
+  // if (!response.ok) {
+  //   throw new Error(`API 요청 실패: ${response.statusText}`);
+  // }
   const result = await response.json();
   return result;
 };
