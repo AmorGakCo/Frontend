@@ -8,8 +8,11 @@ import { useRouter } from 'next/navigation';
 import { useDeleteGroupMutation } from '../hooks/useDeleteGroup';
 import { fetchAuthentication } from '../_lib/fetchAuthentication';
 import TardinessDialog from './TardinessDialog';
+import { useState } from 'react';
 
 export function ButtonGroup({ groupId }: { groupId: number }) {
+  const router = useRouter();
+  const [openDialog,setOpenDialog] = useState(false);
   const { data, error } = useQuery<
     GroupDetailData, // 성공 시 반환될 데이터 타입
     Error, // 에러 타입 (여기서는 Error로 지정)
@@ -21,7 +24,7 @@ export function ButtonGroup({ groupId }: { groupId: number }) {
     staleTime: 60 * 1000, // fresh -> stale, 5분이라는 기준
     gcTime: 300 * 1000,
   });
-  const router = useRouter();
+
   const { mutateAsync: leaveGroup, isError: isErrorLeave } =
     useLeaveGroupMutation(groupId);
   const { mutateAsync: deleteGroup } = useDeleteGroupMutation(groupId);
@@ -54,7 +57,7 @@ export function ButtonGroup({ groupId }: { groupId: number }) {
       >
         모임 위치 인증
       </Button>
-      <TardinessDialog />
+      <TardinessDialog open = {openDialog} setOpen = {setOpenDialog} groupId={groupId}/>
       <Button>장소 변경 요청</Button>
       {data?.isGroupHost ? (
         <Button
