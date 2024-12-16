@@ -38,6 +38,7 @@ export interface GroupDetailData {
   beginAt: string;  // ISO 형식의 날짜 문자열
   endAt: string;    // ISO 형식의 날짜 문자열
   groupMembers: GroupMember[];
+  isGroupHost: boolean
 }
 
 
