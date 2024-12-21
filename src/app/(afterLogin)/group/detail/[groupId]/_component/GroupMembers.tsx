@@ -45,7 +45,7 @@ export default function GroupMembers({groupId}:{groupId:number}) {
                 className="cursor-pointer"
               />
               </DialogTrigger>
-              <GroupMembersModal/>
+              <GroupMembersModal groupMembers = {data!.groupMembers}/>
             </Dialog>
           </div>
         </div>

@@ -1,31 +1,35 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Image from 'next/image';
-import { fetchGroupHistory } from '../_lib/fetchGroupHistory';
-import { useEffect } from 'react';
 import Link from 'next/link';
+import { forwardRef } from 'react';
 
- const GroupCard = ({
-  name,
-  address,
-  beginAt,
-  endAt,
-  groupId,
-}: {
-  name: string;
-  address: string;
-  beginAt: string;
-  endAt: string;
-  groupId: number;
-}) => {
-  const beginAtDate = `${new Date(beginAt).getHours()}:${
-    new Date(beginAt).getMinutes()
-  }`;
-  const endAtDate = `${new Date(endAt).getHours()}:${
-    new Date(endAt).getMinutes()
-  }`;
-  
+const GroupCard = forwardRef<
+  HTMLAnchorElement,
+  {
+    name: string;
+    address: string;
+    beginAt: string;
+    endAt: string;
+    groupId: number;
+  }
+>(({ name, address, beginAt, endAt, groupId }, ref) => {
+  const beginAtDate = `${new Date(beginAt)
+    .getHours()
+    .toString()
+    .padStart(2, '0')}:${new Date(beginAt)
+    .getMinutes()
+    .toString()
+    .padStart(2, '0')}`;
+  const endAtDate = `${new Date(endAt)
+    .getHours()
+    .toString()
+    .padStart(2, '0')}:${new Date(endAt)
+    .getMinutes()
+    .toString()
+    .padStart(2, '0')}`;
+
   return (
-    <Link href = {`/group/detail/${groupId}`}  className="flex gap-2">
+    <Link href={`/group/detail/${groupId}`} className="flex gap-2" ref={ref}>
       <Avatar className="w-[54px] h-[54px]">
         <AvatarImage src="/coin.svg" />
         <AvatarFallback>CN</AvatarFallback>
@@ -47,5 +51,7 @@ import Link from 'next/link';
       </div>
     </Link>
   );
-};
+});
+
+GroupCard.displayName = 'GroupCard';
 export default GroupCard;

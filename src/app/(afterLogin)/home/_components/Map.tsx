@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import GroupCard from './map/GroupCard';
 import { fetchNearGroups } from '../_lib/fetchNearGroups';
 import { handleBoundsChanged } from '../_lib/handleBoundsChanged';
+import { getCurrentPosition } from '../../_lib/getCurrentPosition';
 
 type CardType = 'none' | 'info' | 'recommend';
 
@@ -32,22 +33,18 @@ export default function MapContainer() {
     }
   };
   useEffect(() => {
+    const fetchPosition = async () => {
+      try {
+        const {currentLat:centerLat, currentLon: centerLon} = await getCurrentPosition();
+        setCurLocation((prev) => ({...prev,centerLat,centerLon}));
+      } catch (error) {
+        console.error('Error getting position:', error);
+      }
+    };
     document.addEventListener('keydown', handleEscapeKey);
-    if (navigator.geolocation) {
-      // GeoLocation을 이용해서 접속 위치를 얻어옵니다
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setCurLocation((prev) => ({
-            ...prev,
-            centerLat: position.coords.latitude, // 위도
-            centerLon: position.coords.longitude, // 경도
-          }));
-        },
-        (err) => {
-          alert('위치 정보를 가져올 수 없습니다.');
-        },
-      );
-    }
+    
+
+    fetchPosition();
     return () => {document.removeEventListener('keydown', handleEscapeKey)}
   }, []);
 
