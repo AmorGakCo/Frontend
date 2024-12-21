@@ -33,7 +33,6 @@ export function ButtonGroup({ groupId }: { groupId: number }) {
     const { status } = await leaveGroup();
     if (status === 'success') {
       alert('그룹 탈퇴에 성공했습니다!');
-      router.push('/group/history');
     } else {
       alert('그룹 탈퇴중 오류가 발생했습니다.');
     }
@@ -43,7 +42,6 @@ export function ButtonGroup({ groupId }: { groupId: number }) {
     const { status } = await deleteGroup();
     if (status === 'success') {
       alert('그룹 삭제에 성공했습니다!');
-      router.push('/group/history');
     } else {
       alert('그룹 삭제중 오류가 발생했습니다.');
     }

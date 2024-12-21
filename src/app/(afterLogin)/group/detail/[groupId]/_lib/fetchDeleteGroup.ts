@@ -7,7 +7,7 @@ export async function fetchDeleteGroup(groupId: number) {
       credentials: 'include',
       cache: 'no-cache',
     });
-    return response.data;
+    return response;
   } catch (error) {
     console.error(error);
   }
