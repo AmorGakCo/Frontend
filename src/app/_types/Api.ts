@@ -70,3 +70,13 @@ export interface postCurLocation {
   centerLat: number;
   centerLon: number;
 }
+export interface noticationApiType {
+  page: number;
+  elementSize: number;
+  hasNext: boolean;
+  notificationMessages: notificationMessage[];
+}
+export interface notificationMessage {
+    title : string,
+    content : string
+}
