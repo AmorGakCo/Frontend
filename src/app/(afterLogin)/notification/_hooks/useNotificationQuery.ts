@@ -19,6 +19,10 @@ const useNotificationQuery = () => {
     return data?.pages.flatMap((page) => page.notificationMessages.map((notification:notificationMessage) => ({
       title: notification.title,
       content: notification.content,
+      groupId: notification.groupId,
+      senderMemberId: notification.senderMemberId,
+      receiverMemberId: notification.receiverMemberId,
+      notificationType: notification.notificationType,
     })));
   }, [data]);
   
