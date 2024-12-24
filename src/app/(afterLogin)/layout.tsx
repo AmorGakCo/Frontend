@@ -1,3 +1,4 @@
+import { NotificationComponent } from "@/components/NotificationComponent";
 import NavBar from "@/components/ui/Navbar";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -15,6 +16,7 @@ export default async function RootLayout({
     <>
     {children}
     <NavBar/>
+    <NotificationComponent />
     </>
   );
 }
