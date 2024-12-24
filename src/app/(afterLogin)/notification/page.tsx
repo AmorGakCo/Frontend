@@ -27,13 +27,13 @@ export default function Page() {
 
   return (
     <main className="flex flex-col gap-2 items-center justify-between p-6">
-      <div className="flex w-full justify-center flex-col items-center">
+      <div className="flex w-full justify-center flex-col items-center gap-4">
         {notifications?.map((data: notificationMessage, index) => {
           const isLastElement = index == notifications.length - 1;
           return (
             <NotificationItem
               ref={isLastElement ? lastElementRef : null}
-              key={index}
+              key={data.notificationId}
               data={data}
             />
           );
