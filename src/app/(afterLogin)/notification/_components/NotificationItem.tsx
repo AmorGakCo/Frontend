@@ -23,6 +23,9 @@ export const NotificationItem = forwardRef<
     data.senderMemberId,
     data.notificationId
   );
+  const { mutate: deleteGroup } = useDeleteNotificationMutation(
+    data.notificationId
+  );
   const handleApproveGroup = async () => {
     if (!confirm(`정말로 참여를 승인하시겠습니까?`)) return;
     await approveGroup();
@@ -31,17 +34,24 @@ export const NotificationItem = forwardRef<
     if (!confirm(`정말로 참여를 거절하시겠습니까?`)) return;
     await rejectGroup();
   };
+  const handleDeleteGroup = async () => {
+    await deleteGroup();
+  };
   return (
     <div
       ref={ref}
       className="flex min-w-[312px] max-w-3xl w-full items-center gap-4 md:gap-8 py-[6px]"
     >
-      <div className='h-full flex items-center'>
-      <Image width={44} height={44} src="/coin.svg" alt="notify" />
+      <div className="h-full flex items-center">
+        <Image width={44} height={44} src="/coin.svg" alt="notify" />
       </div>
-      <div className={`flex relative w-full flex-col ${data.notificationType === 'PARTICIPATION_REQUEST' && ('gap-2')} text-[#5D5D5D] sm:text-xs md:text-base lg:text-lg`}>
+      <div
+        className={`flex relative w-full flex-col ${
+          data.notificationType === 'PARTICIPATION_REQUEST' && 'gap-2'
+        } text-[#5D5D5D] sm:text-xs md:text-base lg:text-lg`}
+      >
         {data.content}
-        <div className='flex justify-between items-center'>
+        <div className="flex justify-between items-center">
           {data.notificationType === 'PARTICIPATION_REQUEST' && (
             <div className="flex gap-2">
               <Button
@@ -62,9 +72,17 @@ export const NotificationItem = forwardRef<
               </Button>
             </div>
           )}
-          
         </div>
-        <Image className='absolute right-0 top-1/2 -translate-y-1/2 cursor-pointer' width={20} height={20} src="/close.png" alt="알림 삭제" />
+        <Image
+          onClick={() => {
+            handleDeleteGroup();
+          }}
+          className="absolute right-0 top-1/2 -translate-y-1/2 cursor-pointer"
+          width={20}
+          height={20}
+          src="/close.png"
+          alt="알림 삭제"
+        />
       </div>
     </div>
   );
