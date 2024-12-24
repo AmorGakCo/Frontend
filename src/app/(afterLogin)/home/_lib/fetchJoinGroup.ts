@@ -2,7 +2,7 @@ import { fetchWithAuth } from "../../_lib/FetchWithAuth";
 
 export async function fetchJoinGroup(groupId:number) {
   const response = await fetchWithAuth(
-    `/groups/${groupId}/participation`,
+    `/groups/${groupId}/applications `,
     {
       method:'POST',
       credentials: 'include',
