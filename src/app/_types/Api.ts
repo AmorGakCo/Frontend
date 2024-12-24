@@ -78,5 +78,9 @@ export interface noticationApiType {
 }
 export interface notificationMessage {
     title : string,
-    content : string
+    content : string;
+    groupId: number;
+    senderMemberId: number;
+    receiverMemberId: number;
+    notificationType: 'PARTICIPATION_REQUEST' | 'PARTICIPATION_APPROVED' | 'PARTICIPATION_REJECTED' | 'PARTICIPATION_TARDINESS' | 'PARTICIPATION_WITHDRAW';
 }
