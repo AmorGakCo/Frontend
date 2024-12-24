@@ -1,8 +1,8 @@
 import { fetchWithAuth } from "../../_lib/FetchWithAuth";
 
-export async function fetchRejectParticipation(groupId:number, memberId:number) {
+export async function fetchRejectParticipation(groupId:number, memberId:number,notificationId:number) {
   const response = await fetchWithAuth(
-    `/groups/${groupId}/applications/${memberId}`,
+    `/groups/${groupId}/applications/${memberId}/notifications/${notificationId}`,
     {
       method:'PATCH',
       credentials: 'include',

@@ -2,13 +2,13 @@ import { fetchWithAuth } from '@/app/(afterLogin)/_lib/FetchWithAuth';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchRejectParticipation } from '../_lib/fetchRejectParticipation';
 
-export function useRejectPariticipationMutation(groupId: number, memberId:number) {
+export function useRejectPariticipationMutation(groupId: number, memberId:number, notificationId:number) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async () => {
       // 그룹 탈퇴 API 요청
-      return await fetchRejectParticipation(groupId, memberId); // 그룹 탈퇴 API 호출
+      return await fetchRejectParticipation(groupId, memberId,notificationId); // 그룹 탈퇴 API 호출
     },
     onSuccess: (data) => {
       if (data.status === 'success') {

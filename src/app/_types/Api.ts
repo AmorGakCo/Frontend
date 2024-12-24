@@ -1,4 +1,4 @@
-export interface groupPost{
+export interface groupPost {
   address: string;
   latitude: number;
   longitude: number;
@@ -9,7 +9,6 @@ export interface groupPost{
   description?: string;
 }
 export interface groupModalApiData {
-
   address: string; // 모임 장소 주소
   beginAt: string; // 모임 시작 시간 (ISO 8601 형식)
   currentParticipants: number; // 현재 참가자 수
@@ -19,7 +18,7 @@ export interface groupModalApiData {
   hostNickname: string; // 호스트 닉네임
   isParticipated: boolean; // 사용자가 현재 모임에 참여 중인지 여부
   isParticipationRequested: boolean; // 사용자가 참여 요청을 보냈는지 여부
-};
+}
 interface GroupMember {
   memberId: number;
   imgUrl: string;
@@ -35,31 +34,30 @@ export interface GroupDetailData {
   address: string;
   longitude: number;
   latitude: number;
-  beginAt: string;  // ISO 형식의 날짜 문자열
-  endAt: string;    // ISO 형식의 날짜 문자열
+  beginAt: string; // ISO 형식의 날짜 문자열
+  endAt: string; // ISO 형식의 날짜 문자열
   groupMembers: GroupMember[];
-  isGroupHost: boolean
+  isGroupHost: boolean;
 }
 
-
 export interface GroupHistoryData {
-  groupId : number,
-  name : string,
-  address : string,
-  beginAt : string,
-  endAt : string
+  groupId: number;
+  name: string;
+  address: string;
+  beginAt: string;
+  endAt: string;
 }
 
 export interface ParticipantsHistory {
   page: number;
   elementSize: number;
   hasNext: boolean;
-  histories: GroupHistoryData[];      // 활성화된 그룹 배열
+  histories: GroupHistoryData[]; // 활성화된 그룹 배열
 }
 
 export interface apiLocation {
-  latitude:number;
-  longitude:number;
+  latitude: number;
+  longitude: number;
   groupId?: number;
 }
 export interface postCurLocation {
@@ -77,10 +75,16 @@ export interface noticationApiType {
   notificationMessages: notificationMessage[];
 }
 export interface notificationMessage {
-    title : string,
-    content : string;
-    groupId: number;
-    senderMemberId: number;
-    receiverMemberId: number;
-    notificationType: 'PARTICIPATION_REQUEST' | 'PARTICIPATION_APPROVED' | 'PARTICIPATION_REJECTED' | 'PARTICIPATION_TARDINESS' | 'PARTICIPATION_WITHDRAW';
+  notificationId: number;
+  title: string;
+  content: string;
+  groupId: number;
+  senderMemberId: number;
+  receiverMemberId: number;
+  notificationType:
+    | 'PARTICIPATION_REQUEST'
+    | 'PARTICIPATION_APPROVED'
+    | 'PARTICIPATION_REJECTED'
+    | 'PARTICIPATION_TARDINESS'
+    | 'PARTICIPATION_WITHDRAW';
 }
