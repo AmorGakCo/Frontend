@@ -18,6 +18,7 @@ const useNotificationQuery = () => {
     // 각 페이지의 histories를 합치기
     return data?.pages.flatMap((page) => page.notificationMessages.map((notification:notificationMessage) => ({
       notificationId: notification.notificationId,
+      createdAt: notification.createdAt,
       title: notification.title,
       content: notification.content,
       groupId: notification.groupId,

@@ -5,6 +5,7 @@ import { forwardRef } from 'react';
 import { useApprovePariticipationMutation } from '../_hooks/useApprovePariticipationMutation';
 import { useRejectPariticipationMutation } from '../_hooks/useRejectPariticipationMutation';
 import { useDeleteNotificationMutation } from '../_hooks/useDeleteNotificationMutation';
+import { formatRelativeTime } from '../../_lib/formatRelativeTime';
 interface NotificationItemType {
   data: notificationMessage;
 }
@@ -18,6 +19,7 @@ export const NotificationItem = forwardRef<
     data.senderMemberId,
     data.notificationId
   );
+  console.log(data.createdAt);
   const { mutate: rejectGroup } = useRejectPariticipationMutation(
     data.groupId,
     data.senderMemberId,
@@ -35,23 +37,26 @@ export const NotificationItem = forwardRef<
     await rejectGroup();
   };
   const handleDeleteGroup = async () => {
+    if (data.notificationType === 'PARTICIPATION_REQUEST') {
+      await handleRejectGroup();
+      return;
+    }
     await deleteGroup();
   };
   return (
     <div
       ref={ref}
-      className="flex min-w-[312px] max-w-3xl w-full items-center gap-4 md:gap-8 py-[6px]"
+      className="flex min-w-[312px] max-w-3xl w-full items-center gap-2 md:gap-4 py-[6px]"
     >
       <div className="h-full flex items-center">
         <Image width={44} height={44} src="/coin.svg" alt="notify" />
       </div>
       <div
-        className={`flex relative w-full flex-col ${
-          data.notificationType === 'PARTICIPATION_REQUEST' && 'gap-2'
-        } text-[#5D5D5D] sm:text-xs md:text-base lg:text-lg`}
+        className='flex relative w-full flex-col gap-1 text-[#5D5D5D] text-sm md:text-base lg:text-lg'
       >
         {data.content}
         <div className="flex justify-between items-center">
+          <div className="text-slate-400 md:text-sm text-xs">{formatRelativeTime(new Date(data.createdAt))}</div>
           {data.notificationType === 'PARTICIPATION_REQUEST' && (
             <div className="flex gap-2">
               <Button
@@ -72,17 +77,19 @@ export const NotificationItem = forwardRef<
               </Button>
             </div>
           )}
+          {data.notificationType !== 'PARTICIPATION_REQUEST' && (
+            <Image
+              onClick={() => {
+                handleDeleteGroup();
+              }}
+              className="cursor-pointer mr-2"
+              width={24}
+              height={24}
+              src="/close.png"
+              alt="알림 삭제"
+            />
+          )}
         </div>
-        <Image
-          onClick={() => {
-            handleDeleteGroup();
-          }}
-          className="absolute right-0 top-1/2 -translate-y-1/2 cursor-pointer"
-          width={20}
-          height={20}
-          src="/close.png"
-          alt="알림 삭제"
-        />
       </div>
     </div>
   );

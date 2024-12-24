@@ -81,6 +81,7 @@ export interface notificationMessage {
   groupId: number;
   senderMemberId: number;
   receiverMemberId: number;
+  createdAt: string;
   notificationType:
     | 'PARTICIPATION_REQUEST'
     | 'PARTICIPATION_APPROVED'
