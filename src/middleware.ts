@@ -18,7 +18,7 @@ export default async function middleware(request: NextRequest) {
     return gotoLogin(request);
   }
   if (token && isTokenExpired(token.value)) {
-    const result = await getAccessTokenWithRefreshToken(request);
+    const result = await getAccessTokenWithRefreshToken();
     if (result.status === '/failure') {
       request.cookies.delete('accessToken');
       return gotoLogin(request);
