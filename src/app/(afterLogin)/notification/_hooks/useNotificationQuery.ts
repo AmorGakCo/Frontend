@@ -11,6 +11,8 @@ const useNotificationQuery = () => {
       initialPageParam: 0,
       getNextPageParam: (lastPage) =>
         lastPage.hasNext ? lastPage.page + 1 : undefined,
+      staleTime: 1000 * 60 * 5, 
+
     });
   const notifications = useMemo(() => {
     if (!data?.pages) return [];

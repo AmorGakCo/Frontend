@@ -12,7 +12,7 @@ export const fetchNotificationServer = async () => {
       throw new Error(`Error: ${response.statusText}`);
     }
 
-    return await response.data // 반환할 데이터
+    return response.data as noticationApiType  // 반환할 데이터
   } catch (error) {
     console.error("Failed to fetch data:", error);
     throw error; // 에러를 던져서 React Query가 처리할 수 있도록 함
