@@ -2,11 +2,14 @@
 import { useRouter } from 'next/navigation';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 import { initializeApp } from 'firebase/app';
+import {onBackgroundMessage} from 'firebase/messaging/sw';
 import { useEffect } from 'react';
 import { fetchWithAuth } from '@/app/(afterLogin)/_lib/FetchWithAuth';
+import { useQueryClient } from '@tanstack/react-query';
 
 export const NotificationComponent = () => {
   const router = useRouter();
+	const queryClient = useQueryClient();
 	const onMessageFCM = async () => {
 		if ('serviceWorker' in navigator) {
       navigator.serviceWorker
@@ -56,8 +59,19 @@ export const NotificationComponent = () => {
 			});
 
 		onMessage(messaging, (payload) => {
-			console.log('Message received. ', payload);
+			queryClient.invalidateQueries({
+				predicate: (query) => query.queryKey[0] === 'notification',
+			});
+			const notification = new Notification(payload.notification?.title ?? "Default Title", {
+				body: payload.notification?.body,
+				icon: payload.notification?.icon,
+			});
+			notification.onclick = () => {
+				router.push("/notification");
+			}
 		});
+		
+		
 	};
 
 	useEffect(() => {
