@@ -18,9 +18,10 @@ export default async function RootLayout({
     redirect('/login');
   }
   const queryClient = new QueryClient();
-  await queryClient.prefetchQuery({
+  await queryClient.prefetchInfiniteQuery({
     queryKey: ['notification', { page: 0 }],
     queryFn: fetchNotificationServer,
+    initialPageParam: 0,
   });
   const data = queryClient.getQueryData(['notification', { page: 0 }]);
   const dehydratedState = data ? dehydrate(queryClient) : null;
