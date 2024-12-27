@@ -1,10 +1,10 @@
 import { fetchWithAuth } from "../../_lib/FetchWithAuth";
 
-export async function fetchJoinGroup(groupId:number) {
+export async function fetchDeleteNotification(notificationId:number) {
   const response = await fetchWithAuth(
-    `/groups/${groupId}/applications`,
+    `/notifications/${notificationId} `,
     {
-      method:'POST',
+      method:'DELETE',
       credentials: 'include',
       cache: "no-cache",
     },
