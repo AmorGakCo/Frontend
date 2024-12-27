@@ -19,7 +19,6 @@ export const NotificationItem = forwardRef<
     data.senderMemberId,
     data.notificationId
   );
-  console.log(data.createdAt);
   const { mutate: rejectGroup } = useRejectPariticipationMutation(
     data.groupId,
     data.senderMemberId,
@@ -78,16 +77,14 @@ export const NotificationItem = forwardRef<
             </div>
           )}
           {data.notificationType !== 'PARTICIPATION_REQUEST' && (
-            <Image
-              onClick={() => {
-                handleDeleteGroup();
-              }}
-              className="cursor-pointer mr-2"
-              width={24}
-              height={24}
-              src="/close.png"
-              alt="알림 삭제"
-            />
+            <Button
+            onClick={async () => {
+              handleDeleteGroup();
+            }}
+            className="w-12 h-6 py-2"
+          >
+            읽음
+          </Button>
           )}
         </div>
       </div>
