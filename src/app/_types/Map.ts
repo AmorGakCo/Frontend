@@ -1,3 +1,5 @@
+import { postCurLocation } from "./Api";
+
 export interface addressInfo {
   latitude:number;
   longitude: number;
@@ -5,6 +7,9 @@ export interface addressInfo {
   content: string;
 }
 
+export interface mapLocationType extends postCurLocation {
+  isLoading: boolean;
+}
 
 export interface mapLocation {
   lat: number;
