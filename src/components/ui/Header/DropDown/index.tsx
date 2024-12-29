@@ -27,19 +27,22 @@ export default function DropDown() {
           <AvatarImage src="/coin.png" />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
-        <div className="w-4 h-4 text-xs flex justify-center items-center rounded-full absolute -right-1.5 -bottom-1 bg-red-500 text-white z-50">
-          {notifyNumber}
-        </div>
+        {(notifyNumber && notifyNumber > 0)? (
+          <div className="w-4 h-4 text-xs flex justify-center items-center rounded-full absolute -right-1.5 -bottom-1 bg-red-500 text-white z-50">
+            {notifyNumber}
+          </div>
+        ):''}
       </DropdownMenuTrigger>
       <DropdownMenuContent className="mr-2">
         <Link href="/notification">
           <DropdownMenuItem className="cursor-pointer flex">
             알림
-            {notifyNumber && notifyNumber > 0 && (
+            {
+            notifyNumber && (notifyNumber > 0)? (
               <div className="w-4 h-4 text-xs flex justify-center items-center rounded-full bg-red-500 text-white z-50 ml-2">
                 {notifyNumber}
               </div>
-            )}
+            ):''}
           </DropdownMenuItem>
         </Link>
         <Link href="/user">
