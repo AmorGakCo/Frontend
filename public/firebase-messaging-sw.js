@@ -13,5 +13,37 @@ const firebaseConfig = {
 };
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
- 
+// firebase-messaging-sw.js
+self.addEventListener('notificationclick', function (event) {
+  const origin = self.location.origin;
+  const url = `${origin}/notification`; // 로컬 URL
+
+  event.notification.close();
+
+  event.waitUntil(
+      clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
+          // 이미 열린 창이 있으면 해당 창으로 이동
+          for (let client of windowClients) {
+              if (client.url === url && 'focus' in client) {
+                  return client.focus();
+              }
+          }
+          // 없으면 새 창 열기
+          if (clients.openWindow) {
+              return clients.openWindow(url);
+          }
+      })
+  );
+});
+
+
 const messaging = firebase.messaging();
+messaging.onBackgroundMessage(messaging,async (payload) => {
+  const notificationTitle = payload.notification?.title;
+  const notificationOptions = {
+    body: payload.notification?.body,
+    icon: payload.notification?.icon,
+  };
+  self.registration.showNotification(notificationTitle, notificationOptions);
+
+});
