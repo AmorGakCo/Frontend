@@ -53,7 +53,7 @@ const TardinessDialog = ({ groupId,open,setOpen }: TardinessDialogProps) => {
             </Select>
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter className="w-full sm:justify-center mt-6 px-6">
+        <DialogFooter className="w-full flex sm:flex flex-row justify-center sm:justify-center mt-6 px-6">
           <Button
             className="w-2/3"
             onClick={async () => {
