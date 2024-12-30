@@ -46,6 +46,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { fetchGroupRegister } from '../_lib/fetchGroupRegister';
+import { useQueryClient } from '@tanstack/react-query';
 
 
 export function GroupForm() {
@@ -58,7 +59,7 @@ export function GroupForm() {
     },
   });
   const router = useRouter();
-
+  const queryClient = useQueryClient();
   return (
     <Form {...form}>
       <form
@@ -244,7 +245,7 @@ export function GroupForm() {
       endAt: endAt.toISOString(),
     };
     try {
-      console
+      queryClient.invalidateQueries({queryKey: ['currentGroups']});
       const id = await fetchGroupRegister(api_values);
       
       // id를 반환받은 후에 해당 id로 페이지 이동
