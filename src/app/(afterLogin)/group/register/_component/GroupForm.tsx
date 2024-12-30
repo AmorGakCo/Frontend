@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import dayjs from 'dayjs';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -234,16 +235,17 @@ export function GroupForm() {
       endAt,
       ...restValues 
     } = values;
-    
+
     const api_values = {
       ...restValues,
       address,
       latitude,
       longitude,
       groupCapacity: Number(groupCapacity),
-      beginAt: beginAt.toISOString(),
-      endAt: endAt.toISOString(),
+      beginAt: dayjs(beginAt).format('YYYY-MM-DDTHH:mm:ss.SSS'),
+      endAt: dayjs(endAt).format('YYYY-MM-DDTHH:mm:ss.SSS'),
     };
+
     try {
       queryClient.invalidateQueries({queryKey: ['currentGroups']});
       const id = await fetchGroupRegister(api_values);

@@ -3,6 +3,7 @@ import { groupPost } from '@/app/_types/Api';
 
 export async function fetchGroupRegister(data: groupPost) {
   try {
+    console.log(data);
     const response = await fetchWithAuth(
       `/groups`,
       {
