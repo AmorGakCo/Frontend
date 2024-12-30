@@ -19,23 +19,13 @@ export default function GroupMembers({groupId}:{groupId:number}) {
     staleTime: STALE_TIME, // fresh -> stale, 5분이라는 기준
     gcTime: GC_TIME,
   });
-  // const maxGroupMember = data?.groupMembers &&(data?.groupMembers.length>=5)? 5: data?.groupMembers.length;
-  function maxGroupMember() {
-    if(data?.groupMembers) {
-      if (data?.groupMembers.length>=5) {
-        return 5;
-      } else {
-        data?.groupMembers.length;
-      }
-    
-  }
-  return 0;
-}
+  const maxGroupMember = data?.groupMembers &&(data?.groupMembers.length>=5)? 5: data?.groupMembers.length;
+
   return (
     <div className="flex justify-between items-center w-full h-10">
           <div>모임 인원</div>
           <div className="flex relative h-10">
-            {data?.groupMembers?.slice(0, maxGroupMember()).map((member, index) => {
+            {data?.groupMembers?.slice(0, maxGroupMember).map((member, index) => {
               const zIndex = `z-${index + 1}0`;
               return (
                 <Avatar
