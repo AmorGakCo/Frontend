@@ -2,6 +2,7 @@
 import { GroupDetailData } from "@/app/_types/Api";
 import { useQuery } from "@tanstack/react-query";
 import { fetchGroupData } from "../_lib/fetchGroupData";
+import { GC_TIME, STALE_TIME } from "../_lib/Constants";
 
 const GroupDescription = ({groupId}: {groupId: number}) => {
   const { data, error } = useQuery<
@@ -12,8 +13,8 @@ const GroupDescription = ({groupId}: {groupId: number}) => {
 >({
     queryKey: ["groupDetail", groupId],
     queryFn: fetchGroupData,
-    staleTime: 60 * 1000, // fresh -> stale, 5분이라는 기준
-    gcTime: 300 * 1000,
+    staleTime: STALE_TIME, // fresh -> stale, 5분이라는 기준
+    gcTime: GC_TIME,
   });
   return (
     <div>

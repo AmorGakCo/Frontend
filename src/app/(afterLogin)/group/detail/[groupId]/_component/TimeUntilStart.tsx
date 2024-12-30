@@ -3,6 +3,7 @@ import { GroupDetailData } from "@/app/_types/Api";
 import { timeUntilEvent } from "../_lib/timeUntilEvent";
 import { useQuery } from "@tanstack/react-query";
 import { fetchGroupData } from "../_lib/fetchGroupData";
+import { STALE_TIME,GC_TIME } from "../_lib/Constants";
 
 const TimeUntilStart = ({groupId}: {groupId: number}) => {
   const { data, error } = useQuery<
@@ -13,8 +14,8 @@ const TimeUntilStart = ({groupId}: {groupId: number}) => {
 >({
     queryKey: ["groupDetail", groupId],
     queryFn: fetchGroupData,
-    staleTime: 60 * 1000, // fresh -> stale, 5분이라는 기준
-    gcTime: 300 * 1000,
+    staleTime: STALE_TIME, // fresh -> stale, 5분이라는 기준
+    gcTime: GC_TIME,
   });
   return (
     <div className="w-full flex justify-end mt-2">

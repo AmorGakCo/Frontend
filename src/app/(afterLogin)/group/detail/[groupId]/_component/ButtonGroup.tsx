@@ -3,13 +3,13 @@ import { GroupDetailData } from '@/app/_types/Api';
 import { Button } from '@/components/ui/button';
 import { useQuery } from '@tanstack/react-query';
 import { fetchGroupData } from '../_lib/fetchGroupData';
-import { useLeaveGroupMutation } from '../hooks/useLeaveGroupMutation';
+import { useLeaveGroupMutation } from '../_hooks/useLeaveGroupMutation';
 import { useRouter } from 'next/navigation';
-import { useDeleteGroupMutation } from '../hooks/useDeleteGroup';
+import { useDeleteGroupMutation } from '../_hooks/useDeleteGroup';
 import { fetchAuthentication } from '../_lib/fetchAuthentication';
 import TardinessDialog from './TardinessDialog';
 import { useState } from 'react';
-
+import { GC_TIME, STALE_TIME } from '../_lib/Constants';
 export function ButtonGroup({ groupId }: { groupId: number }) {
   const router = useRouter();
   const [openDialog,setOpenDialog] = useState(false);
@@ -21,8 +21,8 @@ export function ButtonGroup({ groupId }: { groupId: number }) {
   >({
     queryKey: ['groupDetail', groupId],
     queryFn: fetchGroupData,
-    staleTime: 60 * 1000, // fresh -> stale, 5분이라는 기준
-    gcTime: 300 * 1000,
+    staleTime: STALE_TIME,
+    gcTime: GC_TIME,
   });
 
   const { mutateAsync: leaveGroup, isError: isErrorLeave } =

@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { GroupDetailData } from "@/app/_types/Api";
 import { fetchGroupData } from "../_lib/fetchGroupData";
+import { GC_TIME, STALE_TIME } from "../_lib/Constants";
 export default function GroupMembers({groupId}:{groupId:number}) {
   const { data, error } = useQuery<
   GroupDetailData,         // 성공 시 반환될 데이터 타입
@@ -15,15 +16,26 @@ export default function GroupMembers({groupId}:{groupId:number}) {
 >({
     queryKey: ["groupDetail", groupId],
     queryFn: fetchGroupData,
-    staleTime: 60 * 1000, // fresh -> stale, 5분이라는 기준
-    gcTime: 300 * 1000,
+    staleTime: STALE_TIME, // fresh -> stale, 5분이라는 기준
+    gcTime: GC_TIME,
   });
-  const maxGroupMember = (data?.groupMembers.length!>=5)? 5: data?.groupMembers.length;
+  // const maxGroupMember = data?.groupMembers &&(data?.groupMembers.length>=5)? 5: data?.groupMembers.length;
+  function maxGroupMember() {
+    if(data?.groupMembers) {
+      if (data?.groupMembers.length>=5) {
+        return 5;
+      } else {
+        data?.groupMembers.length;
+      }
+    
+  }
+  return 0;
+}
   return (
     <div className="flex justify-between items-center w-full h-10">
           <div>모임 인원</div>
           <div className="flex relative h-10">
-            {data?.groupMembers?.slice(0, maxGroupMember).map((member, index) => {
+            {data?.groupMembers?.slice(0, maxGroupMember()).map((member, index) => {
               const zIndex = `z-${index + 1}0`;
               return (
                 <Avatar
@@ -45,7 +57,9 @@ export default function GroupMembers({groupId}:{groupId:number}) {
                 className="cursor-pointer"
               />
               </DialogTrigger>
-              <GroupMembersModal groupMembers = {data!.groupMembers}/>
+              {data?.groupMembers &&
+              <GroupMembersModal groupMembers = {data?.groupMembers}/>
+}
             </Dialog>
           </div>
         </div>

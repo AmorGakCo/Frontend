@@ -13,9 +13,10 @@ function RQProvider({children}: Props) {
     new QueryClient({
       defaultOptions: {  
         queries: {
-          refetchOnWindowFocus: false,
+          refetchOnWindowFocus: true,
           retryOnMount: true,
-          refetchOnReconnect: false,
+          refetchOnMount: true,
+          refetchOnReconnect: true,
           retry: false,
         },
       },
