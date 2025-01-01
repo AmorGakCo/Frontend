@@ -186,7 +186,9 @@ export function GroupForm() {
           render={({ field }) => (
             <FormItem className="flex flex-col">
               <FormLabel className="text-left">시작 시간</FormLabel>
-              <DateTimePicker value={field.value} onChange={field.onChange} />
+              <DateTimePicker value={field.value} onChange={
+                field.onChange
+                } />
             </FormItem>
           )}
         />
