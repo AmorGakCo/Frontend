@@ -20,7 +20,11 @@ const fontSans = FontSans({
   subsets: ['latin'],
   variable: '--font-sans',
 });
-
+export async function generateMetadata () {
+  return {
+    title:'아모르각코'
+  }
+}
 export default function RootLayout({
   children
   

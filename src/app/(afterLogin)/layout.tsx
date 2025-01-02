@@ -8,6 +8,7 @@ import {
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { fetchNotificationServer } from './notification/_lib/fetchNotificationServer';
+
 export default async function RootLayout({
   children,
 }: Readonly<{

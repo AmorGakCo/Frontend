@@ -23,7 +23,7 @@ export async function generateMetadata({
     });
 
     return {
-      title: `${response.name}`,
+      title: `${response.name} : 아모르각코`,
       description: `${response.description}`,
     };
   } catch (error) {

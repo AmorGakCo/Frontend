@@ -13,6 +13,7 @@ import { ParticipantsHistory, GroupHistoryData } from '@/app/_types/Api';
 import usePreviousGroupsQuery from './_hooks/usePreviousGroupsQuery';
 import { Spinner } from '@/components/ui/spinner';
 
+
 export default function Page() {
   const { data: currentGroups } = useQuery<
     ParticipantsHistory, // 성공 시 반환될 데이터 타입

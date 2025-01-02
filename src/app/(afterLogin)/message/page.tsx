@@ -1,3 +1,8 @@
+export async function generateMetadata () {
+  return {
+    title:'채팅 목록 : 아모르각코'
+  }
+}
 
 export default function Page() {
   return (
