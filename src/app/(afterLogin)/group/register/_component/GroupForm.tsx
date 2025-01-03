@@ -119,7 +119,19 @@ export function GroupForm() {
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
-                          <Button className="flex gap-2 bg-white border-[#a7d1ff] border-[0.5px] px-2 py-1 hover:bg-slate-100 ">
+                          <Button
+                            onClick={() => {
+                              window.open(
+                                `https://map.kakao.com/link/map/${encodeURIComponent(
+                                  field.value.address
+                                )},${field.value.latitude},${
+                                  field.value.longitude
+                                }`,
+                                '_blank'
+                              );
+                            }}
+                            className="flex gap-2 bg-white border-[#a7d1ff] border-[0.5px] px-2 py-1 hover:bg-slate-100 "
+                          >
                             <Image
                               width={24}
                               height={24}
