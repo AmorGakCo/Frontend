@@ -2,6 +2,7 @@
 import { GroupDetailData } from "@/app/_types/Api";
 import { useQuery } from "@tanstack/react-query";
 import { fetchGroupData } from "../_lib/fetchGroupData";
+import { GC_TIME, STALE_TIME } from "../_lib/Constants";
 export default function GroupTime ({groupId}:{groupId: number}) {
   const { data, error } = useQuery<
   GroupDetailData,         // 성공 시 반환될 데이터 타입
@@ -11,18 +12,20 @@ export default function GroupTime ({groupId}:{groupId: number}) {
 >({
     queryKey: ["groupDetail", groupId],
     queryFn: fetchGroupData,
-    staleTime: 60 * 1000, // fresh -> stale, 5분이라는 기준
-    gcTime: 300 * 1000,
+    staleTime: STALE_TIME, // fresh -> stale, 5분이라는 기준
+    gcTime: GC_TIME,
   });
   const beginAtDate = new Date(data!.beginAt);
   const endAtDate = new Date(data!.endAt);
   return (
     <div className="flex justify-between items-center w-full h-10">
           <div>모임 시간</div>
+          {data && ( 
           <div className="font-thin text-xl">
             {`${beginAtDate.getHours().toString().padStart(2,'0')}:${beginAtDate.getMinutes().toString().padStart(2,'0')}`}~
             {`${endAtDate.getHours().toString().padStart(2,'0')}:${endAtDate.getMinutes().toString().padStart(2,'0')}`}
           </div>
+          )}
         </div>
   )
 }

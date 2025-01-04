@@ -7,12 +7,12 @@ import CategorySelector from './MenuBar/CategorySelector';
 
 const MenuBar = ({
   map,
-  curLocation,
+  location,
   setMarkers,
   setSelectedMarker,
 }: {
   map: kakao.maps.Map | undefined;
-  curLocation: geolocation;
+  location: geolocation;
   setMarkers: React.Dispatch<SetStateAction<markerType[] | undefined>>;
   setSelectedMarker: React.Dispatch<SetStateAction<'' | markerType>>;
 }) => {
@@ -81,7 +81,7 @@ ps.categorySearch(category, placesSearchCB, {useMapBounds:true});
 
 // 키워드 검색 완료 시 호출되는 콜백함수 입니다
 
-  }}, [map, category,curLocation]);
+  }}, [map, category,location]);
   return (
     <div className="absolute top-4 left-4 flex flex-col items-start gap-2 z-40">
       <MenuTypeSelector menuType={menuType} setMenuType = {setMenuType}/>

@@ -4,6 +4,7 @@ import { fetchGroupData } from '../_lib/fetchGroupData';
 import { useEffect } from 'react';
 import { GroupDetailData } from '@/app/_types/Api';
 import { useQuery } from '@tanstack/react-query';
+import { GC_TIME, STALE_TIME } from '../_lib/Constants';
 const GroupAddress = ({ groupId }: { groupId: number }) => {
   const { data, error } = useQuery<
   GroupDetailData,         // 성공 시 반환될 데이터 타입
@@ -13,10 +14,9 @@ const GroupAddress = ({ groupId }: { groupId: number }) => {
 >({
     queryKey: ["groupDetail", groupId],
     queryFn: fetchGroupData,
-    staleTime: 60 * 1000, // fresh -> stale, 5분이라는 기준
-    gcTime: 300 * 1000,
+    staleTime: STALE_TIME, // fresh -> stale, 5분이라는 기준
+    gcTime: GC_TIME,
   });
-  console.log(data);
   return (
     <div className="flex justify-between">
       <div>모임 위치</div>

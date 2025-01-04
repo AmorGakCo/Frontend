@@ -1,9 +1,10 @@
 import { postCurLocation } from "@/app/_types/Api";
+import { mapLocationType } from "@/app/_types/Map";
 
 interface curLocationType extends postCurLocation {
   isLoading: boolean;
 }
-export const handleBoundsChanged = (map: kakao.maps.Map,curLocation:curLocationType,setCurLocation:React.Dispatch<React.SetStateAction<curLocationType>>) => {
+export const handleBoundsChanged = (map: kakao.maps.Map,curLocation:curLocationType,setCurLocation:(update: Partial<mapLocationType>) => void) => {
   const bounds = map.getBounds();
   const sw = bounds.getSouthWest();
   const ne = bounds.getNorthEast();
@@ -17,7 +18,7 @@ export const handleBoundsChanged = (map: kakao.maps.Map,curLocation:curLocationT
     center.getLng() !== curLocation.centerLon
   ) {
     // 상태 업데이트 (남서쪽, 북동쪽, 중심 좌표)
-    setCurLocation(() => ({
+    setCurLocation({
       southWestLat: sw.getLat(),
       southWestLon: sw.getLng(),
       northEastLat: ne.getLat(),
@@ -25,6 +26,6 @@ export const handleBoundsChanged = (map: kakao.maps.Map,curLocation:curLocationT
       centerLat: center.getLat(),
       centerLon: center.getLng(),
       isLoading: false,
-    }));
+    });
   }
 };

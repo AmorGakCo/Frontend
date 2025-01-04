@@ -6,25 +6,16 @@ import GroupCard from './map/GroupCard';
 import { fetchNearGroups } from '../_lib/fetchNearGroups';
 import { handleBoundsChanged } from '../_lib/handleBoundsChanged';
 import { getCurrentPosition } from '../../_lib/getCurrentPosition';
+import { mapLocationType } from '@/app/_types/Map';
+import useLocationStore from '@/hooks/useLocationStore';
 
-type CardType = 'none' | 'info' | 'recommend';
 
-interface curLocationType extends postCurLocation {
-  isLoading: boolean;
-}
 export default function MapContainer() {
   const [groups, setGroups] = useState<apiLocation[] | []>([]);
-  const [curLocation, setCurLocation] = useState<curLocationType>({
-    southWestLat: 0,
-    southWestLon: 0,
-    northEastLat: 0,
-    northEastLon: 0,
-    centerLat: 0,
-    centerLon: 0,
-    isLoading: true,
-  });
   console.log(groups);
-  const [card, setCard] = useState<string>('none');
+  const mapLocation = useLocationStore(state => state.mapLocation);
+  const setMapLocation = useLocationStore((state) => state.setMapLocation);
+  const setCurLocation = useLocationStore((state) => state.setCurLocation);
   const [selectedGroupId, setSelectedGroupId] = useState(-1);
   const mapRef = useRef<kakao.maps.Map>(null);
   const handleEscapeKey = (e: KeyboardEvent) => {
@@ -36,15 +27,17 @@ export default function MapContainer() {
     const fetchPosition = async () => {
       try {
         const {currentLat:centerLat, currentLon: centerLon} = await getCurrentPosition();
-        setCurLocation((prev) => ({...prev,centerLat,centerLon}));
+        setMapLocation({centerLat, centerLon});
+        setCurLocation({centerLat, centerLon});
       } catch (error) {
         console.error('Error getting position:', error);
       }
     };
     document.addEventListener('keydown', handleEscapeKey);
     
-
+    if(mapLocation.isLoading) {
     fetchPosition();
+    }
     return () => {document.removeEventListener('keydown', handleEscapeKey)}
   }, []);
 
@@ -53,15 +46,16 @@ export default function MapContainer() {
   // 지도의 경계 좌표와 중심 좌표를 가져오는 함수
   
   useEffect(() => {
-    const {isLoading,...apiData} = curLocation;
+    const {isLoading,...apiData} = mapLocation;
+    console.log(mapLocation);
     if (isLoading === false){
     fetchNearGroups(apiData,setGroups);
     }
-  },[curLocation]);
+  },[mapLocation]);
   return (
     <>
       <Map // 지도를 표시할 Container
-        center={{ lat: curLocation.centerLat, lng: curLocation.centerLon }}
+        center={{ lat: mapLocation.centerLat, lng: mapLocation.centerLon }}
         style={{
           // 지도의 크기
           width: '100%',
@@ -72,12 +66,12 @@ export default function MapContainer() {
         level={3} // 지도의 확대 레벨
         ref={mapRef}
         onIdle={(map) => {
-          setCurLocation((prev) => ({ ...prev, isLoading: true }));
-          handleBoundsChanged(map,curLocation,setCurLocation);
+          setMapLocation({isLoading:true});
+          handleBoundsChanged(map,mapLocation,setMapLocation);
         }}
         onCreate={(map) => {
-          if (curLocation.isLoading === true) {
-            handleBoundsChanged(map,curLocation,setCurLocation);
+          if (mapLocation.isLoading === true) {
+            handleBoundsChanged(map,mapLocation,setMapLocation);
           }
         }}
         onClick={() => {

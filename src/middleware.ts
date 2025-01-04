@@ -13,11 +13,15 @@ export default async function middleware(request: NextRequest) {
   let token = request.cookies.get('accessToken');
   // 토큰이 만료되었으면 새로운 accessToken을 발급받고 쿠키에 저장
   // 토큰이 유효한지
+  if (!token) {
+    return gotoLogin(request);
+  }
   if (token && token.value.split('.').length !== 3) {
     request.cookies.delete('accessToken');
     return gotoLogin(request);
   }
   if (token && isTokenExpired(token.value)) {
+    console.log('토큰 만료');
     const result = await getAccessTokenWithRefreshToken();
     if (result.status === '/failure') {
       request.cookies.delete('accessToken');

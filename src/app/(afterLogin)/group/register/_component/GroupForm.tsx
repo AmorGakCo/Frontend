@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import dayjs from 'dayjs';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -46,7 +47,10 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { fetchGroupRegister } from '../_lib/fetchGroupRegister';
-
+import { useQueryClient } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { FileDiff } from 'lucide-react';
+import { DateTimePicker24h } from './time-picker/DateTimePicker24h';
 
 export function GroupForm() {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -58,6 +62,7 @@ export function GroupForm() {
     },
   });
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   return (
     <Form {...form}>
@@ -105,7 +110,7 @@ export function GroupForm() {
         <FormField
           control={form.control}
           name="addressInfo"
-          render={({ field}) => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>위치</FormLabel>
               <FormDescription>
@@ -114,7 +119,19 @@ export function GroupForm() {
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
-                          <Button className="flex gap-2 bg-white border-[#a7d1ff] border-[0.5px] px-2 py-1 hover:bg-slate-100 ">
+                          <Button
+                            onClick={() => {
+                              window.open(
+                                `https://map.kakao.com/link/map/${encodeURIComponent(
+                                  field.value.address
+                                )},${field.value.latitude},${
+                                  field.value.longitude
+                                }`,
+                                '_blank'
+                              );
+                            }}
+                            className="flex gap-2 bg-white border-[#a7d1ff] border-[0.5px] px-2 py-1 hover:bg-slate-100 "
+                          >
                             <Image
                               width={24}
                               height={24}
@@ -146,7 +163,7 @@ export function GroupForm() {
                       onClick={() => {}}
                       className="bg-white border-[#2990FF] border-[0.5px] hover:bg-slate-100 text-[#2990FF]"
                     >
-                      장소 검색
+                      장소 {field.value ? '변경' : '검색'}
                     </Button>
                   </DialogTrigger>
                   <DialogOverlay className="bg-white" />
@@ -182,7 +199,10 @@ export function GroupForm() {
           render={({ field }) => (
             <FormItem className="flex flex-col">
               <FormLabel className="text-left">시작 시간</FormLabel>
-              <DateTimePicker value={field.value} onChange={field.onChange} />
+              <DateTimePicker24h
+                value={field.value}
+                onChange={field.onChange}
+              />
             </FormItem>
           )}
         />
@@ -192,7 +212,10 @@ export function GroupForm() {
           render={({ field }) => (
             <FormItem className="flex flex-col">
               <FormLabel className="text-left">종료 시간</FormLabel>
-              <DateTimePicker value={field.value} onChange={field.onChange} />
+              <DateTimePicker24h
+                value={field.value}
+                onChange={field.onChange}
+              />{' '}
             </FormItem>
           )}
         />
@@ -225,37 +248,36 @@ export function GroupForm() {
   );
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const { 
-      addressInfo: { address, latitude, longitude,...restAddressInfo }, 
-      isAgree, 
+    const {
+      addressInfo: { address, latitude, longitude, ...restAddressInfo },
+      isAgree,
       groupCapacity,
       beginAt,
       endAt,
-      ...restValues 
+      ...restValues
     } = values;
-    
+
     const api_values = {
       ...restValues,
       address,
       latitude,
       longitude,
       groupCapacity: Number(groupCapacity),
-      beginAt: beginAt.toISOString(),
-      endAt: endAt.toISOString(),
+      beginAt: dayjs(beginAt).format('YYYY-MM-DDTHH:mm:ss.SSS'),
+      endAt: dayjs(endAt).format('YYYY-MM-DDTHH:mm:ss.SSS'),
     };
+
     try {
-      console
+      queryClient.invalidateQueries({ queryKey: ['currentGroups'] });
       const id = await fetchGroupRegister(api_values);
-      
+
       // id를 반환받은 후에 해당 id로 페이지 이동
       if (id) {
         router.push(`/group/detail/${id}`);
       }
     } catch (error) {
-      alert('그룹 생성에 실패하였습니다.')
+      alert('그룹 생성에 실패하였습니다.');
       // 에러 처리 (필요한 경우 사용자에게 알림)
     }
-
-
   }
 }
