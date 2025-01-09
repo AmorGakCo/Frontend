@@ -71,6 +71,7 @@ export function InfoForm() {
                 <div className="flex gap-4">
                   <Button
                     onClick={() => field.onChange(true)}
+                    type='button'
                     className="w-[148px]"
                     variant={`${field.value ? 'default' : 'outline'}`}
                   >
@@ -79,6 +80,7 @@ export function InfoForm() {
                   <Button
                     onClick={() => field.onChange(false)}
                     className="w-[148px]"
+                    type='button'
                     variant={`${field.value ? 'outline' : 'default'}`}
                   >
                     OFF
