@@ -6,6 +6,8 @@ const phoneNumberRegex = /^010-?\d{4}-?\d{4}$/; // 한국 010 번호 형식
 
 export const formSchema = z
 .object({
+  latitude: z.number(),
+  longitude: z.number(),
   smsNotificationSetting: z
     .boolean(),
   githubUrl:  z
