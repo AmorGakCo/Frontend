@@ -45,9 +45,9 @@ export default function DropDown() {
             ):''}
           </DropdownMenuItem>
         </Link>
-        <Link href="/user">
+        <Link href="/info">
           <DropdownMenuItem className="cursor-pointer">
-            계정관리
+            추가 정보 관리
           </DropdownMenuItem>
         </Link>
         <LogoutButton />

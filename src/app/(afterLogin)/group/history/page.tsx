@@ -79,7 +79,7 @@ export default function Page() {
               />
             ))}
           </div>
-          {currentGroups?.histories.length ===0 && <div className='w-full flex justify-center'>현재 참여중인 그룹이 없습니다.</div>}
+          {currentGroups?.histories.length ===0 && <div className='w-full flex text-[#4A8EF7] mb-6 justify-center'>현재 참여중인 그룹이 없습니다.</div>}
           <div className="flex gap-4 w-full">
             <Image
               width={14}

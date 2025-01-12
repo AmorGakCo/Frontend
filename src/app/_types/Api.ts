@@ -89,3 +89,22 @@ export interface notificationMessage {
     | 'PARTICIPATION_TARDINESS'
     | 'PARTICIPATION_WITHDRAW';
 }
+
+export interface memberInfo {
+  address: string;
+  latitude: number;
+  longitude: number;
+  groupCapacity: number;
+  beginAt: string;
+  endAt: string;
+  name?: string; // 선택적으로 변경
+  description?: string;
+}
+
+export interface memberPatchInfo {
+  githubUrl: string;
+  phoneNumber: string;
+  smsNotificationSetting: boolean;
+  longitude: number;
+  latitude: number;
+};

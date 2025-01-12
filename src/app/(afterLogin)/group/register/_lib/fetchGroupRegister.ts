@@ -19,6 +19,7 @@ export async function fetchGroupRegister(data: groupPost) {
       
     } else {
       console.error('Error:', result.message);
+      alert(result.message);
     }
 
     return result.data.groupId;
