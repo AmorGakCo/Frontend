@@ -57,74 +57,80 @@ export function InfoForm() {
   });
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="gap-6 flex flex-col mt-6 px-6"
-      >
-        <FormField
-          control={form.control}
-          name="smsNotificationSetting"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>SMS 알림</FormLabel>
-              <FormControl>
-                <div className="flex gap-4">
-                  <Button
-                    onClick={() => field.onChange(true)}
-                    type='button'
-                    className="w-[148px]"
-                    variant={`${field.value ? 'default' : 'outline'}`}
-                  >
-                    ON
-                  </Button>
-                  <Button
-                    onClick={() => field.onChange(false)}
-                    className="w-[148px]"
-                    type='button'
-                    variant={`${field.value ? 'outline' : 'default'}`}
-                  >
-                    OFF
-                  </Button>
-                </div>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="githubUrl"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Github 주소 설정</FormLabel>
-              <FormControl>
-                <Input placeholder="github 주소를 입력해주세요" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="phoneNumber"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>전화번호</FormLabel>
-              <FormControl>
-                <Input placeholder="전화번호를 입력해주세요" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit" className="mt-40">
-          설정
-        </Button>
-      </form>
+      <div className="w-full flex justify-center">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="gap-6 flex flex-col mt-6 px-6 w-full max-w-96"
+        >
+          <FormField
+            control={form.control}
+            name="smsNotificationSetting"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>SMS 알림</FormLabel>
+                <FormControl>
+                  <div className="flex gap-4">
+                    <Button
+                      onClick={() => field.onChange(true)}
+                      type="button"
+                      className="w-full"
+                      variant={`${field.value ? 'default' : 'outline'}`}
+                    >
+                      ON
+                    </Button>
+                    <Button
+                      onClick={() => field.onChange(false)}
+                      className="w-full"
+                      type="button"
+                      variant={`${field.value ? 'outline' : 'default'}`}
+                    >
+                      OFF
+                    </Button>
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="githubUrl"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Github 주소 설정</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="github 주소를 입력해주세요"
+                    {...field}
+                    className="w-full"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="phoneNumber"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>전화번호</FormLabel>
+                <FormControl>
+                  <Input placeholder="전화번호를 입력해주세요" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit" className="mt-40">
+            설정
+          </Button>
+        </form>
+      </div>
     </Form>
   );
 }
 async function onSubmit(value: z.infer<typeof formSchema>) {
-  const id = await fetchMemberInfo(value);
-  console.log(id);
+  const data = await fetchMemberInfo(value);
+  console.log(data);
 }
