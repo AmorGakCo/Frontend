@@ -24,23 +24,14 @@ export const NotificationComponent = () => {
   const queryClient = useQueryClient();
   const [isClient, setIsClient] = useState<boolean>(false);
   const PermitFCM = async () => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .register('/firebase-messaging-sw.js')
-        .then((registration) => {
-          console.log(
-            'Service Worker registered with scope:',
-            registration.scope
-          );
-        })
-        .catch((err) => {
-          console.error('Service Worker registration failed:', err);
-        });
-    }
+    
     // 브라우저에 알림 권한 요청
-    const permission = await Notification.requestPermission();
-    if (permission !== 'granted') return;
+    if (Notification.permission === 'default'&& !Cookies.get('deny_notification')) { 
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') return;
 
+    }
+    if (Notification.permission=== 'denied') return;
     const firebaseApp = initializeApp({
       apiKey: 'AIzaSyCguupCkfjsQ_8Bc0Je0o1aao80L4EzuUA',
       authDomain: 'amorgakco.firebaseapp.com',
@@ -80,6 +71,7 @@ export const NotificationComponent = () => {
       queryClient.invalidateQueries({
         predicate: (query) => query.queryKey[0] === 'notification',
       });
+      if(!Cookies.get('deny_notification')) {
       const notification = new Notification(
         payload.notification?.title ?? 'Default Title',
         {
@@ -90,6 +82,8 @@ export const NotificationComponent = () => {
       notification.onclick = () => {
         router.push('/notification');
       };
+    }
+
     });
   };
   const RefuseFCM = () => {
@@ -97,6 +91,24 @@ export const NotificationComponent = () => {
   };
   useEffect(() => {
     setIsClient(true);
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker
+        .register('/firebase-messaging-sw.js')
+        .then((registration) => {
+          console.log(
+            'Service Worker registered with scope:',
+            registration.scope
+          );
+        })
+        .catch((err) => {
+          console.error('Service Worker registration failed:', err);
+        });
+    }
+    console.log('permitFCM')
+    if(Notification.permission !== 'default' || Cookies.get('deny_notification')) {
+      
+      PermitFCM();
+    }
   }, []);
 
   return (
