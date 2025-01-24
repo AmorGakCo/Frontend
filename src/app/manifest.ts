@@ -15,7 +15,21 @@ export default function manifest(): MetadataRoute.Manifest {
         sizes: '106x32',
         type: 'image/svg',
       },
-      
+      {
+        "src": "/icons/ms-icon-310x310.png",
+        "type": "image/png",
+        "sizes": "310x310"
+      },
+      {
+        "src": "/icons/apple-icon.png",
+        "type": "image/png",
+        "sizes": "192x192"
+      },
+      {
+        "src": "/icons/android-icon-192x192.png",
+        "type": "image/png",
+        "sizes": "192x192"
+      }
     ],
   }
 }
