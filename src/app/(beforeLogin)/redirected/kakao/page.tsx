@@ -30,7 +30,7 @@ export default function Login() {
     },
     onError: (error) => {
       console.error('Login Failed', error);
-      router.push('/login');
+      router.push('/');
     },
   });
 

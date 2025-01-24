@@ -16,7 +16,7 @@ export default async function RootLayout({
 }>) {
   const token = cookies().get('accessToken');
   if (!token) {
-    redirect('/login');
+    redirect('/');
   }
   const queryClient = new QueryClient();
   await queryClient.prefetchInfiniteQuery({

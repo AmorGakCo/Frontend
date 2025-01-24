@@ -3,7 +3,7 @@ import { isTokenExpired } from '@/lib/isTokenExpired';
 import { NextRequest, NextResponse } from 'next/server';
 
 function gotoLogin(request: NextRequest) {
-  const response = NextResponse.redirect(new URL('/login', request.url));
+  const response = NextResponse.redirect(new URL('/', request.url));
   response.cookies.delete('accessToken');
   response.cookies.delete('refresh-token');
   return response;
