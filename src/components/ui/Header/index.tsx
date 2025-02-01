@@ -1,29 +1,33 @@
 'use client';
 import Image from 'next/image';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter, usePathname, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { pathToTitleMap } from '@/app/constants';
 import Cookies from 'js-cookie';
-import { Button } from '../button';
-import Link from 'next/link';
 import DropDown from './DropDown';
+import useTitleStore from '@/hooks/useTitleStore';
 
 export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
   const accessToken = Cookies.get('accessToken');
-  const [title, setTitle] = useState(pathToTitleMap[pathname]);
-  // const [isClient, setIsClient] = useState(false);
-
-  // useEffect(() => {
-  //   setIsClient(true); // 클라이언트에서만 동작하도록 설정
-  // }, []);
+  const [isClient, setIsClient] = useState(false);
+  const title = useTitleStore((state) => state.title);
+  const setTitle = useTitleStore((state) => state.setTitle);
 
   useEffect(() => {
-    const newTitle = pathToTitleMap[pathname];
-    setTitle(newTitle);
+    setIsClient(true); // 클라이언트에서만 동작하도록 설정
+  }, []);
+
+  useEffect(() => {
+    if (pathname !== 'home' && !pathname.includes('/group/detail')) {
+      const newTitle = pathToTitleMap[pathname];
+      setTitle(newTitle);
+    }
   }, [pathname]);
   return (
+    <>
+    {isClient && (
     <div
       className="flex w-full justify-between px-6 items-center h-headerHeight fixed top-0 z-20 bg-white shadow-md"
       suppressHydrationWarning={true}
@@ -55,7 +59,7 @@ export default function Header() {
           alt="뒤로가기"
         />
       )}
-      {pathname !== '/home' && (
+      {pathname !== '/' && pathname !== '/home' && (
         <div className="font-bold text-xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
           {title}
         </div>
@@ -66,6 +70,7 @@ export default function Header() {
           <Button>로그인</Button>
         </Link>
       )} */}
-    </div>
+    </div>)}
+    </>
   );
 }

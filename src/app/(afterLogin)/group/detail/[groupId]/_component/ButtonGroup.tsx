@@ -8,11 +8,11 @@ import { useRouter } from 'next/navigation';
 import { useDeleteGroupMutation } from '../_hooks/useDeleteGroup';
 import { fetchAuthentication } from '../_lib/fetchAuthentication';
 import TardinessDialog from './TardinessDialog';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { GC_TIME, STALE_TIME } from '../_lib/Constants';
+import useTitleStore from '@/hooks/useTitleStore';
 export function ButtonGroup({ groupId }: { groupId: number }) {
-  const router = useRouter();
-  const [openDialog,setOpenDialog] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
   const { data, error } = useQuery<
     GroupDetailData, // 성공 시 반환될 데이터 타입
     Error, // 에러 타입 (여기서는 Error로 지정)
@@ -24,7 +24,7 @@ export function ButtonGroup({ groupId }: { groupId: number }) {
     staleTime: STALE_TIME,
     gcTime: GC_TIME,
   });
-
+  const setTitle = useTitleStore((state) => state.setTitle);
   const { mutateAsync: leaveGroup, isError: isErrorLeave } =
     useLeaveGroupMutation(groupId);
   const { mutateAsync: deleteGroup } = useDeleteGroupMutation(groupId);
@@ -46,6 +46,9 @@ export function ButtonGroup({ groupId }: { groupId: number }) {
       alert('그룹 삭제중 오류가 발생했습니다.');
     }
   };
+  useEffect(() => {
+    setTitle(`${data?.name}`)
+  },[])
   return (
     <div className="flex flex-col gap-4">
       <Button
@@ -55,7 +58,11 @@ export function ButtonGroup({ groupId }: { groupId: number }) {
       >
         모임 위치 인증
       </Button>
-      <TardinessDialog open = {openDialog} setOpen = {setOpenDialog} groupId={groupId}/>
+      <TardinessDialog
+        open={openDialog}
+        setOpen={setOpenDialog}
+        groupId={groupId}
+      />
       <Button>장소 변경 요청</Button>
       {data?.isGroupHost ? (
         <Button

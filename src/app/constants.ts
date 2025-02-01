@@ -8,4 +8,5 @@ export const pathToTitleMap:PathToTitleMap =  {
   // '/login': '로그인',
   '/ranking': '랭킹',
   '/message': '채팅',
+  '/notification': '알림',
 }
